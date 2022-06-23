@@ -38,8 +38,8 @@ class _QuoteState extends State<Quote> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           final quote = snapshot.data as QuoteModel;
-          final _text = quote.quoteText;
-          final _author = quote.author;
+          final text = quote.quoteText;
+          final author = quote.author;
 
           return SafeArea(
             child: SingleChildScrollView(
@@ -47,10 +47,9 @@ class _QuoteState extends State<Quote> {
                 children: <Widget>[
                   Container(
                     margin: const EdgeInsets.all(30.0),
-                    child: const Text(
-                      //_text!
-                      'hellohellohellohellohellohellohellohellohellohhellohellohellohellohellohellohellohellohellohellohellohellohelloellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohellohello',
-                      style: TextStyle(
+                    child: Text(
+                      text!,
+                      style: const TextStyle(
                         fontSize: 40.0,
                         color: Colors.white,
                         fontFamily: 'Courgette',
@@ -62,7 +61,7 @@ class _QuoteState extends State<Quote> {
                     height: 10.0,
                   ),
                   Text(
-                    '- ${_author!}',
+                    '- ${author!}',
                     style: const TextStyle(
                       fontSize: 30.0,
                       color: Colors.white,
@@ -75,10 +74,10 @@ class _QuoteState extends State<Quote> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () async {
-                          if (_text!.isEmpty) {
+                          if (text.isEmpty) {
                             // Implement dialog
                           } else {
-                            Share.share('$_text - $_author');
+                            Share.share('$text - $author');
                           }
                         },
                         icon: const Icon(
