@@ -1,7 +1,7 @@
 // Contains all code for the register view of our app!
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_motivation/services/auth/auth_exceptions.dart';
+import 'package:mobile_motivation/services/auth/auth_errors.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_event.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_state.dart';
@@ -37,25 +37,17 @@ class _RegisterViewState extends State<RegisterView> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         if (state is AuthStateRegistering) {
-          if (state.exception is AuthErrorWeakPassword) {
+          if (state.exception is AuthErrorUnknown) {
             await showErrorDialog(
-              context,
-              const AuthErrorWeakPassword().dialogText,
+              context: context,
+              title: 'Unknown Registration Error',
+              text: 'Failed to register user',
             );
-          } else if (state.exception is AuthErrorEmailAlreadyInUse) {
+          } else if (state.exception != null) {
             await showErrorDialog(
-              context,
-              const AuthErrorEmailAlreadyInUse().dialogText,
-            );
-          } else if (state.exception is AuthErrorInvalidEmail) {
-            await showErrorDialog(
-              context,
-              const AuthErrorInvalidEmail().dialogText,
-            );
-          } else if (state.exception is AuthErrorUnknown) {
-            await showErrorDialog(
-              context,
-              'Failed to register user',
+              context: context,
+              title: state.exception!.dialogTitle,
+              text: state.exception!.dialogText,
             );
           }
         }

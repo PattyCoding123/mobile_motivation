@@ -39,8 +39,10 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
           } else if (state.exception != null) {
             // Generic error message to help protect user's account information.
             await showErrorDialog(
-              context,
-              'We could not process your request. Please make sure that you are a registered user. If not, please register an account.',
+              context: context,
+              title: 'Password Reset Error',
+              text:
+                  'We could not process your request. Please make sure that you are a registered user. If not, please register an account.',
             );
           }
         }

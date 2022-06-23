@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_motivation/services/auth/auth_exceptions.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_event.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_state.dart';
@@ -41,21 +40,11 @@ class _LoginViewState extends State<LoginView> {
         // with a loading progress field either true or false depending on
         // whether the user has sucessfully logged in or not respectfully.
         if (state is AuthStateLoggedOut) {
-          if (state.exception is AuthErrorUserNotFound) {
+          if (state.exception != null) {
             await showErrorDialog(
-              context,
-              const AuthErrorUserNotFound().dialogText,
-            );
-          } else if (state.exception is AuthErrorWrongPassword) {
-            // Generic error message to protect user's account information.
-            await showErrorDialog(
-              context,
-              const AuthErrorWrongPassword().dialogText,
-            );
-          } else if (state.exception is AuthErrorUnknown) {
-            await showErrorDialog(
-              context,
-              const AuthErrorUnknown().dialogText,
+              context: context,
+              title: state.exception!.dialogTitle,
+              text: state.exception!.dialogText,
             );
           }
         }
