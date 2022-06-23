@@ -1,0 +1,1 @@
+class NetworkErrorAuthException implements Exception {}
