@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mobile_motivation/data/quote_model.dart';
-import 'package:mobile_motivation/services/api_provider.dart';
+import 'package:mobile_motivation/services/api/api_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 // The following widget will represent the logic for presenting the quote
