@@ -41,21 +41,21 @@ class _LoginViewState extends State<LoginView> {
         // with a loading progress field either true or false depending on
         // whether the user has sucessfully logged in or not respectfully.
         if (state is AuthStateLoggedOut) {
-          if (state.exception is UserNotFoundAuthException) {
+          if (state.exception is AuthErrorUserNotFound) {
             await showErrorDialog(
               context,
-              'Cannot find a user with the entered credentials!',
+              const AuthErrorUserNotFound().dialogText,
             );
-          } else if (state.exception is WrongPasswordAuthException) {
+          } else if (state.exception is AuthErrorWrongPassword) {
             // Generic error message to protect user's account information.
             await showErrorDialog(
               context,
-              'Wrong email or password',
+              const AuthErrorWrongPassword().dialogText,
             );
-          } else if (state.exception is GenericAuthException) {
+          } else if (state.exception is AuthErrorUnknown) {
             await showErrorDialog(
               context,
-              'Authentication error',
+              const AuthErrorUnknown().dialogText,
             );
           }
         }

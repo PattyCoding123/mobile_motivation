@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:mobile_motivation/services/auth/auth_exceptions.dart';
 import 'package:mobile_motivation/services/auth/auth_provider.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_event.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_state.dart';
@@ -9,22 +10,28 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc(AuthProvider provider)
       : super(const AuthStateUninitialized(isLoading: true)) {
     // Should register event
-    on<AuthEventShouldRegister>((event, emit) {
-      emit(const AuthStateRegistering(
-        exception: null,
-        isLoading: false,
-      ));
-    });
+    on<AuthEventShouldRegister>(
+      (event, emit) {
+        emit(
+          const AuthStateRegistering(
+            exception: null,
+            isLoading: false,
+          ),
+        );
+      },
+    );
 
     // Forgot password event
     on<AuthEventForgotPassword>((event, emit) async {
       // Initial state of AuthStateForgotPassword where user is idling
       // in the ForgotPasswordView.
-      emit(const AuthStateForgotPassword(
-        exception: null,
-        hasSentEmail: false,
-        isLoading: false,
-      ));
+      emit(
+        const AuthStateForgotPassword(
+          exception: null,
+          hasSentEmail: false,
+          isLoading: false,
+        ),
+      );
 
       final email = event.email;
       if (email == null) {
@@ -33,11 +40,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       // The user wants to actually send a forgot-password email.
       // Begin the loading screen.
-      emit(const AuthStateForgotPassword(
-        exception: null,
-        hasSentEmail: false,
-        isLoading: true,
-      ));
+      emit(
+        const AuthStateForgotPassword(
+          exception: null,
+          hasSentEmail: false,
+          isLoading: true,
+        ),
+      );
 
       bool didSendEmail;
       Exception? exception;
@@ -48,11 +57,20 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       } on Exception catch (e) {
         didSendEmail = false;
         exception = e;
+
+        // Emit state with an error if password reset email failed to send.
+        emit(
+          AuthStateForgotPassword(
+            exception: AuthError.fromFirebase(exception),
+            hasSentEmail: didSendEmail,
+            isLoading: false,
+          ),
+        );
       }
 
       // End the loading screen.
       emit(AuthStateForgotPassword(
-        exception: exception,
+        exception: null,
         hasSentEmail: didSendEmail,
         isLoading: false,
       ));
@@ -79,10 +97,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             password: password,
           );
           await provider.sendEmailVerification();
-          emit(const AuthStateNeedsVerification(isLoading: false));
+          emit(
+            const AuthStateNeedsVerification(
+              isLoading: false,
+            ),
+          );
         } on Exception catch (e) {
           emit(AuthStateRegistering(
-            exception: e,
+            exception: AuthError.fromFirebase(e),
             isLoading: false,
           ));
         }
@@ -95,17 +117,25 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await provider.initialize();
         final user = provider.currentUser;
         if (user == null) {
-          emit(const AuthStateLoggedOut(
-            exception: null,
-            isLoading: false,
-          ));
+          emit(
+            const AuthStateLoggedOut(
+              exception: null,
+              isLoading: false,
+            ),
+          );
         } else if (!user.isEmailVerified) {
-          emit(const AuthStateNeedsVerification(isLoading: false));
+          emit(
+            const AuthStateNeedsVerification(
+              isLoading: false,
+            ),
+          );
         } else {
-          emit(AuthStateLoggedIn(
-            user: user,
-            isLoading: false,
-          ));
+          emit(
+            AuthStateLoggedIn(
+              user: user,
+              isLoading: false,
+            ),
+          );
         }
       },
     );
@@ -115,11 +145,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (event, emit) async {
         // Enable Loading screen to show that the authentication service
         // is trying to log in the user.
-        emit(const AuthStateLoggedOut(
-          exception: null,
-          isLoading: true,
-          loadingText: 'Please wait while we log you in...',
-        ));
+        emit(
+          const AuthStateLoggedOut(
+            exception: null,
+            isLoading: true,
+            loadingText: 'Please wait while we log you in...',
+          ),
+        );
         // AuthEventLogIn has an email and password member which we
         // will use to try and log in with the authentication service.
         final email = event.email;
@@ -134,32 +166,44 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             // AuthStateLoggedOut state without any exception and no loading
             // indication which disables the loading screen, and then
             // it will emit the AuthStateNeedsVerification state.
-            emit(const AuthStateLoggedOut(
-              exception: null,
-              isLoading: false,
-            ));
-            emit(const AuthStateNeedsVerification(isLoading: false));
+            emit(
+              const AuthStateLoggedOut(
+                exception: null,
+                isLoading: false,
+              ),
+            );
+            emit(
+              const AuthStateNeedsVerification(
+                isLoading: false,
+              ),
+            );
           } else {
             // If the user is verified, then the AuthBloc will emit
             // the AuthStateLoggedOut state with no exception or loading
             // indication which disables the loading screen, and then
             // it will emit the AuthStateLoggedIn state.
-            emit(const AuthStateLoggedOut(
-              exception: null,
-              isLoading: false,
-            ));
-            emit(AuthStateLoggedIn(
-              user: user,
-              isLoading: false,
-            ));
+            emit(
+              const AuthStateLoggedOut(
+                exception: null,
+                isLoading: false,
+              ),
+            );
+            emit(
+              AuthStateLoggedIn(
+                user: user,
+                isLoading: false,
+              ),
+            );
           }
         } on Exception catch (e) {
           // On an exception, emit the AuthStateLoggedOut state
           // with no exception or loading indication.
-          emit(AuthStateLoggedOut(
-            exception: e,
-            isLoading: false,
-          ));
+          emit(
+            AuthStateLoggedOut(
+              exception: AuthError.fromFirebase(e),
+              isLoading: false,
+            ),
+          );
         }
       },
     );
@@ -182,7 +226,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           // an exception and loading indicator as false.
           emit(
             AuthStateLoggedOut(
-              exception: e,
+              exception: AuthError.fromFirebase(e),
               isLoading: false,
             ),
           );

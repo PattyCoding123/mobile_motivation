@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show immutable;
 import 'package:equatable/equatable.dart';
+import 'package:mobile_motivation/services/auth/auth_exceptions.dart';
 import 'package:mobile_motivation/services/auth/auth_user.dart';
 
 @immutable
@@ -20,7 +21,7 @@ class AuthStateUninitialized extends AuthState {
 
 // State of AuthState that indicates the user is registering.
 class AuthStateRegistering extends AuthState {
-  final Exception? exception;
+  final AuthError? exception;
   const AuthStateRegistering({
     required this.exception,
     required bool isLoading,
@@ -29,7 +30,7 @@ class AuthStateRegistering extends AuthState {
 
 // State of AuthState that indicates the user forgot their password.
 class AuthStateForgotPassword extends AuthState {
-  final Exception? exception;
+  final AuthError? exception;
   final bool hasSentEmail;
   const AuthStateForgotPassword({
     required this.exception,
@@ -59,7 +60,7 @@ class AuthStateNeedsVerification extends AuthState {
 // to differentiate the different states of AuthStateLoggedOut.
 // This state will also determine the loading screen for logging in/out.
 class AuthStateLoggedOut extends AuthState with EquatableMixin {
-  final Exception? exception;
+  final AuthError? exception;
   const AuthStateLoggedOut({
     required this.exception,
     required bool isLoading,
