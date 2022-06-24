@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/helpers/loading/loading_screen.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_event.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_state.dart';
 import 'package:mobile_motivation/services/auth/firebase_auth_provider.dart';
 import 'package:mobile_motivation/views/forgot_password_view.dart';
 import 'package:mobile_motivation/views/login_view.dart';

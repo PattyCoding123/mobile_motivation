@@ -10,7 +10,7 @@ class FirebaseCloudStorage {
   final quotes = FirebaseFirestore.instance.collection('quotes');
 
   // Method to delete a specific quote
-  Future<void> deleteNote({required String documentId}) async {
+  Future<void> deleteQuote({required String documentId}) async {
     try {
       // quotes.doc(documentId) is the path towards the specific quote document
       // that is in the "quotes" collection
@@ -36,7 +36,7 @@ class FirebaseCloudStorage {
 
   // Method to get all the notes for a specified user as a Stream of an Iterable
   // of CloudQuotes
-  Stream<Iterable<CloudQuote>> allNotes({required String ownerUserId}) {
+  Stream<Iterable<CloudQuote>> allQuotes({required String ownerUserId}) {
     final allQuotes = quotes
         // where filters out all quotes by the ownerUserIdFieldName constant
         // or 'user_id' such that we only retrieve the notes that have
@@ -58,7 +58,7 @@ class FirebaseCloudStorage {
   // Method to create new quotes and store them into the Cloud Firestore database.
   // Use cloud_storage_constants to fill in field name requirements.
   // Return a CloudQuote using the information from the newly created document.
-  Future<CloudQuote> createNewNote({
+  Future<CloudQuote> createNewQuote({
     required String ownerUserId,
     required QuoteModel quote,
   }) async {

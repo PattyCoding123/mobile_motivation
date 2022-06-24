@@ -1,8 +1,18 @@
 import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:mobile_motivation/data/quote_model.dart';
+import 'package:mobile_motivation/services/api/api_exception.dart';
+import 'package:mobile_motivation/services/api/api_provider.dart';
 import 'package:mobile_motivation/services/auth/auth_errors.dart';
 import 'package:mobile_motivation/services/auth/auth_provider.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_event.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_state.dart';
+import 'package:mobile_motivation/services/auth/auth_user.dart';
+import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
+
+import 'package:mobile_motivation/services/cloud/firebase_cloud_storage.dart';
+
+part 'auth_event.dart';
+part 'auth_state.dart';
 
 // AuthBloc handles AuthEvents and what states should be emitted from
 // certain AuthEvents. Each on<Event> is defined for each AuthEvent.
@@ -11,7 +21,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       : super(const AuthStateUninitialized(isLoading: true)) {
     // Should register event
     on<AuthEventShouldRegister>(
-      (event, emit) {
+      (
+        event,
+        emit,
+      ) {
         emit(
           const AuthStateRegistering(
             exception: null,
@@ -22,59 +35,63 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     // Forgot password event
-    on<AuthEventForgotPassword>((event, emit) async {
-      // Initial state of AuthStateForgotPassword where user is idling
-      // in the ForgotPasswordView.
-      emit(
-        const AuthStateForgotPassword(
-          exception: null,
-          hasSentEmail: false,
-          isLoading: false,
-        ),
-      );
+    on<AuthEventForgotPassword>(
+      (event, emit) async {
+        // Initial state of AuthStateForgotPassword where user is idling
+        // in the ForgotPasswordView.
+        emit(
+          const AuthStateForgotPassword(
+            exception: null,
+            hasSentEmail: false,
+            isLoading: false,
+          ),
+        );
 
-      final email = event.email;
-      if (email == null) {
-        return; // The user just wanted to go to the forgot-password screen.
-      }
+        final email = event.email;
+        if (email == null) {
+          return; // The user just wanted to go to the forgot-password screen.
+        }
 
-      // The user wants to actually send a forgot-password email.
-      // Begin the loading screen.
-      emit(
-        const AuthStateForgotPassword(
-          exception: null,
-          hasSentEmail: false,
-          isLoading: true,
-        ),
-      );
+        // The user wants to actually send a forgot-password email.
+        // Begin the loading screen.
+        emit(
+          const AuthStateForgotPassword(
+            exception: null,
+            hasSentEmail: false,
+            isLoading: true,
+          ),
+        );
 
-      bool didSendEmail;
-      Exception? exception;
-      try {
-        await provider.sendPasswordReset(toEmail: email);
-        didSendEmail = true;
-        exception = null;
-      } on Exception catch (e) {
-        didSendEmail = false;
-        exception = e;
+        bool didSendEmail;
+        Exception? exception;
+        try {
+          await provider.sendPasswordReset(toEmail: email);
+          didSendEmail = true;
+          exception = null;
+        } on Exception catch (e) {
+          didSendEmail = false;
+          exception = e;
 
-        // Emit state with an error if password reset email failed to send.
+          // Emit state with an error if password reset email failed to send.
+          emit(
+            AuthStateForgotPassword(
+              exception: AuthError.fromFirebase(exception),
+              hasSentEmail: didSendEmail,
+              isLoading: false,
+            ),
+          );
+        }
+
+        // End the loading screen.
         emit(
           AuthStateForgotPassword(
-            exception: AuthError.fromFirebase(exception),
+            exception: null,
             hasSentEmail: didSendEmail,
             isLoading: false,
           ),
         );
-      }
-
-      // End the loading screen.
-      emit(AuthStateForgotPassword(
-        exception: null,
-        hasSentEmail: didSendEmail,
-        isLoading: false,
-      ));
-    });
+      },
+    );
 
     // Send email verification event
     on<AuthEventSendEmailVerification>(
@@ -88,7 +105,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Register event
     on<AuthEventRegister>(
-      (event, emit) async {
+      (
+        event,
+        emit,
+      ) async {
         final email = event.email;
         final password = event.password;
         try {
@@ -113,7 +133,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Initialize event
     on<AuthEventInitialize>(
-      (event, emit) async {
+      (
+        event,
+        emit,
+      ) async {
         await provider.initialize();
         final user = provider.currentUser;
         if (user == null) {
@@ -134,6 +157,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             AuthStateLoggedIn(
               user: user,
               isLoading: false,
+              quote: state.quote,
+              favQuotes: state.favQuotes,
             ),
           );
         }
@@ -142,7 +167,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Log in event
     on<AuthEventLogIn>(
-      (event, emit) async {
+      (
+        event,
+        emit,
+      ) async {
         // Enable Loading screen to show that the authentication service
         // is trying to log in the user.
         emit(
@@ -192,6 +220,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
               AuthStateLoggedIn(
                 user: user,
                 isLoading: false,
+                quote: state.quote,
+                favQuotes: state.favQuotes,
               ),
             );
           }
@@ -210,7 +240,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     // Log out event
     on<AuthEventLogOut>(
-      (event, emit) async {
+      (
+        event,
+        emit,
+      ) async {
         try {
           // If user logs out successfully, emit the AuthStateLoggedOut state
           // with no exception and loading indicator as false.
@@ -228,6 +261,103 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             AuthStateLoggedOut(
               exception: AuthError.fromFirebase(e),
               isLoading: false,
+            ),
+          );
+        }
+      },
+    );
+
+    // Generate quote event. Only done if the user is logged in!
+    on<AuthEventFetchQuote>(
+      (
+        event,
+        emit,
+      ) async {
+        final user = provider.currentUser!;
+
+        try {
+          emit(
+            AuthStateLoggedIn(
+              user: user,
+              quote: state.quote,
+              favQuotes: state.favQuotes,
+              isLoading: true,
+            ),
+          );
+
+          final quoteOfTheDay = await ApiProvider().fetchQuote();
+
+          emit(
+            AuthStateLoggedIn(
+              user: user,
+              isLoading: false,
+              quote: quoteOfTheDay,
+              favQuotes: state.favQuotes,
+            ),
+          );
+        } on NetworkErrorAuthException catch (e) {
+          emit(
+            AuthStateLoggedIn(
+              user: user,
+              isLoading: false,
+              exception: e,
+              quote: state.quote,
+              favQuotes: state.favQuotes,
+            ),
+          );
+        }
+      },
+    );
+
+    // Handle retrieving notes from Cloud Firestore!
+    on<AuthEventGetFavoriteQuotes>(
+      (
+        event,
+        emit,
+      ) {
+        final user = provider.currentUser!;
+
+        final favQuotes = FirebaseCloudStorage().allQuotes(
+          ownerUserId: user.id,
+        );
+
+        emit(
+          AuthStateLoggedIn(
+            user: user,
+            isLoading: false,
+            quote: state.quote,
+            favQuotes: favQuotes,
+          ),
+        );
+      },
+    );
+
+    on<AuthEventAddFavoriteQuote>(
+      (
+        event,
+        emit,
+      ) async {
+        final user = provider.currentUser;
+
+        if (user == null) {
+          emit(
+            const AuthStateLoggedOut(
+              exception: null,
+              isLoading: false,
+            ),
+          );
+        } else {
+          await FirebaseCloudStorage().createNewQuote(
+            ownerUserId: user.id,
+            quote: event.quote,
+          );
+
+          emit(
+            AuthStateLoggedIn(
+              user: user,
+              isLoading: false,
+              quote: state.quote,
+              favQuotes: state.favQuotes,
             ),
           );
         }

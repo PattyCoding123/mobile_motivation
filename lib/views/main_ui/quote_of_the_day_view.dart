@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mobile_motivation/data/quote_data.dart';
-import 'package:mobile_motivation/services/auth/auth_service.dart';
-import 'package:mobile_motivation/services/cloud/firebase_cloud_storage.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_motivation/data/show_quote_view.dart';
+import 'package:mobile_motivation/enums/menu_action.dart';
+import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
+import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
+import 'package:mobile_motivation/utilities/dialogs/logout_dialog.dart';
+import 'package:mobile_motivation/views/main_ui/quotes_list_view.dart';
+
+extension Count<T extends Iterable> on Stream<T> {
+  Stream<int> get getLength => map((event) => event.length);
+}
 
 class QOTDView extends StatefulWidget {
   const QOTDView({Key? key}) : super(key: key);
@@ -11,12 +19,11 @@ class QOTDView extends StatefulWidget {
 }
 
 class _QOTDViewState extends State<QOTDView> {
-  late final FirebaseCloudStorage _quotesService;
-  String get userId => AuthService.firebase().currentUser!.id;
-
   @override
   void initState() {
-    _quotesService = FirebaseCloudStorage();
+    context.read<AuthBloc>().add(const AuthEventFetchQuote());
+    context.read<AuthBloc>().add(const AuthEventGetFavoriteQuotes());
+    // _notesService = FirebaseCloudStorage();
     super.initState();
   }
 
@@ -27,6 +34,8 @@ class _QOTDViewState extends State<QOTDView> {
 
   @override
   Widget build(BuildContext context) {
+    final quoteOfTheDay = context.watch<AuthBloc>().state.quote;
+
     Size size = MediaQuery.of(context).size;
 
     // Our main quotes page will be a Scaffold widget whose body
@@ -35,16 +44,42 @@ class _QOTDViewState extends State<QOTDView> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-            titleSpacing: size.width / 5,
+            titleSpacing: 0.0,
             backgroundColor: Colors.black,
-            title: const Text(
-              'Here is your daily motivation!',
-              style: TextStyle(
-                fontFamily: 'Courgette',
-                fontSize: 22.0,
+            title: const Center(
+              child: Text(
+                'Here is your daily motivation!',
+                style: TextStyle(
+                  fontFamily: 'Courgette',
+                  fontSize: 24.0,
+                ),
               ),
             ),
-            actions: [],
+            actions: [
+              // PopupMenuBotton action that currently contains logout option
+              PopupMenuButton<MenuAction>(
+                // On selected deals with whataever PopupMenuItem was selected!
+                onSelected: (value) async {
+                  // Use a switch to deal with the PopupMenuItems!
+                  switch (value) {
+                    case MenuAction.logout:
+                      final shouldLogout = await showLogOutDialog(context);
+                      if (shouldLogout) {
+                        if (!mounted) return;
+                        context.read<AuthBloc>().add(const AuthEventLogOut());
+                      }
+                  }
+                },
+                itemBuilder: (context) {
+                  return const [
+                    PopupMenuItem<MenuAction>(
+                      value: MenuAction.logout,
+                      child: Text('Log out'),
+                    ),
+                  ];
+                },
+              ),
+            ],
             bottom: const TabBar(
               tabs: <Widget>[
                 Tab(
@@ -60,23 +95,63 @@ class _QOTDViewState extends State<QOTDView> {
                 )
               ],
             )),
-        body: Center(
-          // The stack widget will allow for overlapping the text in front
-          // of a background image asset.
-          child: Stack(
-            children: <Widget>[
-              // First, create the centered image asset.
-              Center(
-                child: Image.asset(
-                  'assets/images/background.jpg',
-                  width: size.width,
-                  height: size.height,
-                  fit: BoxFit.fill,
-                ),
+        body: TabBarView(
+          children: [
+            Center(
+              // The stack widget will allow for overlapping the text in front
+              // of a background image asset.
+              child: Stack(
+                children: <Widget>[
+                  // First, create the centered image asset.
+                  Center(
+                    child: Image.asset(
+                      'assets/images/background.jpg',
+                      width: size.width,
+                      height: size.height,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                  ShowQuoteView(
+                    quoteOfTheDay: quoteOfTheDay,
+                  ),
+                ],
               ),
-              const Quote(),
-            ],
-          ),
+            ),
+            StreamBuilder(
+              stream: context.watch<AuthBloc>().state.favQuotes,
+              builder: (context, snapshot) {
+                switch (snapshot.connectionState) {
+                  case ConnectionState.waiting:
+                  case ConnectionState.active:
+                    if (snapshot.hasData) {
+                      // The snapshot data for StreamBuilder contains all the quotes
+                      // from the Cloud Firestore database that were placed in the
+                      // stream via the allQuotes method in FirebaseCloudStorage.
+                      final allQuotes = snapshot.data as Iterable<CloudQuote>;
+                      // Return our NotesListView widget with allNotes as the
+                      // notes parameter.
+                      return QuotesListView(
+                        quotes: allQuotes,
+                        onDeleteQuote: (quote) async {
+                          context.read<AuthBloc>().add(
+                                AuthEventDeleteQuote(
+                                  quote,
+                                ),
+                              );
+                        },
+                        // On onTap, pass the current note as an argument
+                        // to the BuildContext of createOrUpdateNoteView
+                      );
+                    } else {
+                      return const CircularProgressIndicator();
+                    }
+
+                  default:
+                    return const CircularProgressIndicator();
+                }
+              },
+            )
+          ],
         ),
       ),
     );

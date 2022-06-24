@@ -3,8 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/services/auth/auth_errors.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_event.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_state.dart';
 import 'package:mobile_motivation/utilities/dialogs/error_dialog.dart';
 
 class RegisterView extends StatefulWidget {
