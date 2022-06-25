@@ -82,7 +82,7 @@ class _HomeViewState extends State<HomeView> {
               tabs: <Widget>[
                 Tab(
                   icon: Icon(
-                    Icons.note,
+                    Icons.description,
                   ),
                 ),
                 Tab(

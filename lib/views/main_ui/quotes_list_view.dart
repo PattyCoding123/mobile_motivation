@@ -55,8 +55,9 @@ class QuotesListView extends StatelessWidget {
                   }
                 },
                 icon: const Icon(
-                  Icons.remove,
+                  Icons.block_flipped,
                   color: Colors.red,
+                  size: 35.0,
                 ),
               ),
             ),
