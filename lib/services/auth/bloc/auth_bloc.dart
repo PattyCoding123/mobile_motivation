@@ -17,6 +17,7 @@ part 'auth_state.dart';
 // AuthBloc handles AuthEvents and what states should be emitted from
 // certain AuthEvents. Each on<Event> is defined for each AuthEvent.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final FirebaseCloudStorage _quotesService = FirebaseCloudStorage();
   AuthBloc(AuthProvider provider)
       : super(const AuthStateUninitialized(isLoading: true)) {
     // Should register event
@@ -317,7 +318,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ) {
         final user = provider.currentUser!;
 
-        final favQuotes = FirebaseCloudStorage().allQuotes(
+        final favQuotes = _quotesService.allQuotes(
           ownerUserId: user.id,
         );
 
@@ -347,7 +348,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           );
         } else {
-          await FirebaseCloudStorage().createNewQuote(
+          await _quotesService.createNewQuote(
             ownerUserId: user.id,
             quote: event.quote,
           );
@@ -375,7 +376,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         );
       } else {
         try {
-          FirebaseCloudStorage().deleteQuote(
+          _quotesService.deleteQuote(
             documentId: event.favCloudQuote.documentId,
           );
 
