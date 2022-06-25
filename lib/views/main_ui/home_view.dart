@@ -103,7 +103,7 @@ class _HomeViewState extends State<HomeView> {
                   // First, create the centered image asset.
                   Center(
                     child: Image.asset(
-                      'assets/images/background.jpg',
+                      'assets/images/background_2.jpg',
                       width: size.width,
                       height: size.height,
                       fit: BoxFit.fill,

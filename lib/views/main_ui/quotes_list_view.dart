@@ -21,13 +21,13 @@ class QuotesListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (quotes.isNotEmpty) {
-      return Card(
-        child: ListView.builder(
-          itemCount: quotes.length,
-          itemBuilder: (context, index) {
-            // Individual quote in the Iterable of CloudQuotes
-            final quote = quotes.elementAt(index);
-            return ListTile(
+      return ListView.builder(
+        itemCount: quotes.length,
+        itemBuilder: (context, index) {
+          // Individual quote in the Iterable of CloudQuotes
+          final quote = quotes.elementAt(index);
+          return Card(
+            child: ListTile(
               title: Text(
                 quote.text,
                 style: const TextStyle(
@@ -59,9 +59,9 @@ class QuotesListView extends StatelessWidget {
                   color: Colors.red,
                 ),
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       );
     } else {
       return const Center(
