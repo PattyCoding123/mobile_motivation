@@ -141,11 +141,11 @@ class _HomeViewState extends State<HomeView> {
                         // to the BuildContext of createOrUpdateNoteView
                       );
                     } else {
-                      return const CircularProgressIndicator();
+                      return const Center(child: CircularProgressIndicator());
                     }
 
                   default:
-                    return const CircularProgressIndicator();
+                    return const Center(child: CircularProgressIndicator());
                 }
               },
             )
