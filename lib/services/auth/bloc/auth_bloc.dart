@@ -17,7 +17,6 @@ part 'auth_state.dart';
 // AuthBloc handles AuthEvents and what states should be emitted from
 // certain AuthEvents. Each on<Event> is defined for each AuthEvent.
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
-  final FirebaseCloudStorage _quotesService = FirebaseCloudStorage();
   AuthBloc(AuthProvider provider)
       : super(const AuthStateUninitialized(isLoading: true)) {
     // Should register event
@@ -274,12 +273,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event,
         emit,
       ) async {
-        final user = provider.currentUser!;
+        final user = provider.currentUser;
+
+        if (user == null) {
+          emit(
+            const AuthStateLoggedOut(exception: null, isLoading: false),
+          );
+        }
 
         try {
           emit(
             AuthStateLoggedIn(
-              user: user,
+              user: user!,
               quote: state.quote,
               favQuotes: state.favQuotes,
               isLoading: true,
@@ -299,7 +304,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         } on NetworkErrorAuthException catch (e) {
           emit(
             AuthStateLoggedIn(
-              user: user,
+              user: user!,
               isLoading: false,
               exception: e,
               quote: state.quote,
@@ -316,10 +321,19 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event,
         emit,
       ) {
-        final user = provider.currentUser!;
+        final user = provider.currentUser;
 
-        final favQuotes = _quotesService.allQuotes(
-          ownerUserId: user.id,
+        if (user == null) {
+          emit(
+            const AuthStateLoggedOut(
+              exception: null,
+              isLoading: false,
+            ),
+          );
+        }
+
+        final favQuotes = FirebaseCloudStorage().allQuotes(
+          ownerUserId: user!.id,
         );
 
         emit(
@@ -348,7 +362,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           );
         } else {
-          await _quotesService.createNewQuote(
+          await FirebaseCloudStorage().createNewQuote(
             ownerUserId: user.id,
             quote: event.quote,
           );
@@ -374,30 +388,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             isLoading: false,
           ),
         );
-      } else {
-        try {
-          _quotesService.deleteQuote(
-            documentId: event.favCloudQuote.documentId,
-          );
+      }
+      try {
+        FirebaseCloudStorage().deleteQuote(
+          documentId: event.favCloudQuote.documentId,
+        );
 
-          emit(
-            AuthStateLoggedIn(
-                user: user,
-                isLoading: false,
-                quote: state.quote,
-                favQuotes: state.favQuotes),
-          );
-        } on CloudStorageException catch (e) {
-          emit(
-            AuthStateLoggedIn(
-              user: user,
+        emit(
+          AuthStateLoggedIn(
+              user: user!,
               isLoading: false,
               quote: state.quote,
-              favQuotes: state.favQuotes,
-              exception: e,
-            ),
-          );
-        }
+              favQuotes: state.favQuotes),
+        );
+      } on CloudStorageException catch (e) {
+        emit(
+          AuthStateLoggedIn(
+            user: user!,
+            isLoading: false,
+            quote: state.quote,
+            favQuotes: state.favQuotes,
+            exception: e,
+          ),
+        );
       }
     });
   }
