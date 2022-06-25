@@ -4,6 +4,10 @@ import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
 import 'package:mobile_motivation/services/cloud/cloud_storage_constants.dart';
 import 'package:mobile_motivation/services/cloud/cloud_storage_exceptions.dart';
 
+extension Count<T extends Iterable> on Stream<T> {
+  Stream<int> get getLength => map((event) => event.length);
+}
+
 class FirebaseCloudStorage {
   // Database member that is initialized via Firebase Cloud Firestore
   // collection method. The collection's name is passed as the argument.
@@ -57,27 +61,39 @@ class FirebaseCloudStorage {
 
   // Method to create new quotes and store them into the Cloud Firestore database.
   // Use cloud_storage_constants to fill in field name requirements.
-  // Return a CloudQuote using the information from the newly created document.
-  Future<CloudQuote> createNewQuote({
+  Future<void> createNewQuote({
     required String ownerUserId,
     required QuoteModel quote,
   }) async {
-    // Cloud Firestore's add method returns a Future document reference, so we must
-    // await on it.
-    final document = await quotes.add({
-      ownerUserIdFieldName: ownerUserId,
-      textFieldName: quote.quoteText,
-      authorFieldName: quote.author,
-    });
-
-    final fetchedQuote = await document.get();
-
-    return CloudQuote(
-      documentId: fetchedQuote.id,
-      ownerUserId: ownerUserId,
-      text: quote.quoteText!,
-      author: quote.author!,
+    // Check to see if the quote actually does exist.
+    final doesQuoteExist = await quotes
+        .where(
+          ownerUserIdFieldName,
+          isEqualTo: ownerUserId,
+        )
+        .where(
+          textFieldName,
+          isEqualTo: quote.quoteText,
+        )
+        .get()
+        .then(
+      (docSnapshot) {
+        if (docSnapshot.size != 0) {
+          return false;
+        } else {
+          return true;
+        }
+      },
     );
+
+    // If quote exists, add it the collection.
+    if (doesQuoteExist) {
+      quotes.add({
+        ownerUserIdFieldName: ownerUserId,
+        textFieldName: quote.quoteText,
+        authorFieldName: quote.author,
+      });
+    }
   }
 
   // Instance that calls to private factory constructor

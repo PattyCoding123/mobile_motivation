@@ -5,7 +5,7 @@ import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/services/auth/firebase_auth_provider.dart';
 import 'package:mobile_motivation/views/forgot_password_view.dart';
 import 'package:mobile_motivation/views/login_view.dart';
-import 'package:mobile_motivation/views/main_ui/quote_of_the_day_view.dart';
+import 'package:mobile_motivation/views/main_ui/home_view.dart';
 import 'package:mobile_motivation/views/register_view.dart';
 import 'package:mobile_motivation/views/verify_email_view.dart';
 
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
       },
       builder: (context, state) {
         if (state is AuthStateLoggedIn) {
-          return const QOTDView();
+          return const HomeView();
         } else if (state is AuthStateNeedsVerification) {
           return const VerifyEmailView();
         } else if (state is AuthStateLoggedOut) {

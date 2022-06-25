@@ -64,9 +64,20 @@ flutter:
     - assets/images/
 
   fonts:
+    # Font by Karolina Lach
     - family: Courgette
       fonts:
         - asset: assets/fonts/Courgette-Regular.ttf
+
+    # Font by Joe Prince
+    - family: Handlee
+      fonts:
+        - asset: assets/fonts/Handlee-Regular.ttf
+
+    # Font by Vernon Adams
+    - family: CarterOne
+      fonts:
+        - asset: assets/fonts/CarterOne-Regular.ttf
     
 
   # The following line ensures that the Material Icons font is

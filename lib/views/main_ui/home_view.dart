@@ -1,24 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mobile_motivation/data/show_quote_view.dart';
+import 'package:mobile_motivation/constants/font_constants.dart';
+import 'package:mobile_motivation/views/main_ui/show_quote_view.dart';
 import 'package:mobile_motivation/enums/menu_action.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
 import 'package:mobile_motivation/utilities/dialogs/logout_dialog.dart';
 import 'package:mobile_motivation/views/main_ui/quotes_list_view.dart';
 
-extension Count<T extends Iterable> on Stream<T> {
-  Stream<int> get getLength => map((event) => event.length);
-}
-
-class QOTDView extends StatefulWidget {
-  const QOTDView({Key? key}) : super(key: key);
+class HomeView extends StatefulWidget {
+  const HomeView({Key? key}) : super(key: key);
 
   @override
-  State<QOTDView> createState() => _QOTDViewState();
+  State<HomeView> createState() => _HomeViewState();
 }
 
-class _QOTDViewState extends State<QOTDView> {
+class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     context.read<AuthBloc>().add(const AuthEventFetchQuote());
@@ -50,8 +47,9 @@ class _QOTDViewState extends State<QOTDView> {
               child: Text(
                 'Here is your daily motivation!',
                 style: TextStyle(
-                  fontFamily: 'Courgette',
+                  fontFamily: courgetteFamily,
                   fontSize: 24.0,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),

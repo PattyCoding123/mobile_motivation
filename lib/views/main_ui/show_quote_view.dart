@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/data/quote_model.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 
@@ -30,7 +31,7 @@ class ShowQuoteView extends StatelessWidget {
                   style: const TextStyle(
                     fontSize: 40.0,
                     color: Colors.white,
-                    fontFamily: 'Courgette',
+                    fontFamily: courgetteFamily,
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -43,7 +44,7 @@ class ShowQuoteView extends StatelessWidget {
                 style: const TextStyle(
                   fontSize: 30.0,
                   color: Colors.white,
-                  fontFamily: 'Courgette',
+                  fontFamily: courgetteFamily,
                 ),
                 textAlign: TextAlign.center,
               ),
@@ -104,7 +105,7 @@ class ShowQuoteView extends StatelessWidget {
           child: const Text(
             'A quote is not visible right now. Instead, check out previously liked quotes.',
             style: TextStyle(
-              fontFamily: 'Courgette',
+              fontFamily: courgetteFamily,
               fontSize: 30.0,
               color: Colors.white,
             ),

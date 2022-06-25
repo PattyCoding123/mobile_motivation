@@ -8,7 +8,7 @@ import 'package:mobile_motivation/services/auth/auth_errors.dart';
 import 'package:mobile_motivation/services/auth/auth_provider.dart';
 import 'package:mobile_motivation/services/auth/auth_user.dart';
 import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
-
+import 'package:mobile_motivation/services/cloud/cloud_storage_exceptions.dart';
 import 'package:mobile_motivation/services/cloud/firebase_cloud_storage.dart';
 
 part 'auth_event.dart';
@@ -363,5 +363,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         }
       },
     );
+
+    on<AuthEventDeleteQuote>((event, emit) {
+      final user = provider.currentUser;
+      if (user == null) {
+        emit(
+          const AuthStateLoggedOut(
+            exception: null,
+            isLoading: false,
+          ),
+        );
+      } else {
+        try {
+          FirebaseCloudStorage().deleteQuote(
+            documentId: event.favCloudQuote.documentId,
+          );
+
+          emit(
+            AuthStateLoggedIn(
+                user: user,
+                isLoading: false,
+                quote: state.quote,
+                favQuotes: state.favQuotes),
+          );
+        } on CloudStorageException catch (e) {
+          emit(
+            AuthStateLoggedIn(
+              user: user,
+              isLoading: false,
+              quote: state.quote,
+              favQuotes: state.favQuotes,
+              exception: e,
+            ),
+          );
+        }
+      }
+    });
   }
 }

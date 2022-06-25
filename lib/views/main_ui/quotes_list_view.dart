@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
 import 'package:mobile_motivation/utilities/dialogs/delete_dialog.dart';
 
@@ -30,7 +31,7 @@ class QuotesListView extends StatelessWidget {
               title: Text(
                 quote.text,
                 style: const TextStyle(
-                  fontFamily: 'Courgette',
+                  fontFamily: courgetteFamily,
                   fontSize: 25.0,
                 ),
                 softWrap: true,
@@ -38,7 +39,7 @@ class QuotesListView extends StatelessWidget {
               subtitle: Text(
                 quote.author,
                 style: const TextStyle(
-                  fontFamily: 'Courgette',
+                  fontFamily: courgetteFamily,
                   fontSize: 20.0,
                 ),
                 softWrap: true,
@@ -67,9 +68,8 @@ class QuotesListView extends StatelessWidget {
         child: Text(
           'You have no favorite quotes!',
           style: TextStyle(
-            fontFamily: 'Courgette',
+            fontFamily: courgetteFamily,
             fontSize: 18,
-            fontWeight: FontWeight.bold,
           ),
         ),
       );

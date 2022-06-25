@@ -67,6 +67,6 @@ class AuthEventAddFavoriteQuote extends AuthEvent {
 
 // Event of AuthEvent that indicates the user deleted a quote.
 class AuthEventDeleteQuote extends AuthEvent {
-  final CloudQuote quote;
-  const AuthEventDeleteQuote(this.quote);
+  final CloudQuote favCloudQuote;
+  const AuthEventDeleteQuote(this.favCloudQuote);
 }
