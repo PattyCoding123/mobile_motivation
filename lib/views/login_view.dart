@@ -86,11 +86,17 @@ class LoginView extends StatelessWidget {
                     height: 30.0,
                   ),
                   // Display the contents of the LoginForm widget last.
-                  const LoginForm(),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 0.0,
+                    ),
+                    child: LoginForm(),
+                  ),
                   // SizedBox widget that separates the Form widgets and the buttons
                   // for resetting a password or registering.
                   const SizedBox(
-                    height: 30.0,
+                    height: 20.0,
                   ),
                   // Reset Password Button:
                   // An elevated button that initiates a BLoC event called
@@ -117,6 +123,9 @@ class LoginView extends StatelessWidget {
                   // An elevated button that initiates a BLoC event called
                   // AuthEventForgotPassword. It is also styled to fit
                   // the theming of the application.
+                  const SizedBox(
+                    height: 10.0,
+                  ),
                   ElevatedButton(
                     style: style,
                     onPressed: () {

@@ -61,6 +61,7 @@ class ShowQuoteView extends StatelessWidget {
                     },
                     icon: const Icon(
                       Icons.share,
+                      size: 30.0,
                       color: Colors.white,
                     ),
                   ),
@@ -89,6 +90,7 @@ class ShowQuoteView extends StatelessWidget {
                     },
                     icon: const Icon(
                       Icons.favorite,
+                      size: 30.0,
                       color: Colors.red,
                     ),
                   )
