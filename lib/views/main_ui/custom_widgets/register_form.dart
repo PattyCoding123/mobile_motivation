@@ -99,12 +99,10 @@ class _RegisterFormState extends State<RegisterForm> {
               ),
             ),
             // Register Button:
-            // An ElevatedButton to register the user by triggering a
+            // An elevated button to register the user by triggering a
             // BLoC Event called AuthEventRegister. It is decorated to
             // fit the theming of the app. BlocListener will listen to the
-            // changes in the state and will handle dialogs if the Bloc
-            // fails to output the AuthStateLoggedIn AuthState after the
-            // AuthEventLogIn has been invoked.
+            // changes in the state and will handle dialogs.
             ElevatedButton(
               onPressed: () async {
                 final email = _email.text;

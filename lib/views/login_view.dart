@@ -85,7 +85,7 @@ class LoginView extends StatelessWidget {
                   const SizedBox(
                     height: 30.0,
                   ),
-                  // Display the contents of the LoginForm widget last.
+                  // Display the contents of the LoginForm widget.
                   const Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 16.0,

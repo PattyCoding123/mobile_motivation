@@ -99,7 +99,7 @@ class _LoginFormState extends State<LoginForm> {
               ),
             ),
             // Login Button:
-            // An ElevatedButton to login the user by triggering a
+            // An elevated button to login the user by triggering a
             // BLoC Event called AuthEventLogIn. It is decorated to
             // fit the theming of the app. BlocListener will listen to the
             // changes in the state and will handle dialogs if the Bloc
