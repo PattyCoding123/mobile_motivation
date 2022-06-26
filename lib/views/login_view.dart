@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/utilities/dialogs/error_dialog.dart';
-import 'package:mobile_motivation/views/login_form.dart';
+import 'package:mobile_motivation/views/main_ui/custom_widgets/login_form.dart';
 
 // The LoginView will display a view with a background image, a form
 // for users to enter account information, and buttons to log in the user
