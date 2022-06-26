@@ -18,7 +18,7 @@ void main() async {
     MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.deepPurple,
       ),
       // BlocProvider provides the AuthBloc instance and has a child widget
       // which is the HomePage (since the widget must return a BlocBuilder).

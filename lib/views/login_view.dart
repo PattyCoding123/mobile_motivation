@@ -1,35 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/utilities/dialogs/error_dialog.dart';
+import 'package:mobile_motivation/views/login_form.dart';
 
-class LoginView extends StatefulWidget {
+// The LoginView will display a view with a background image, a form
+// for users to enter account information, and buttons to log in the user
+// or to send them to another view that will allow them to reset their
+// password or to register.
+class LoginView extends StatelessWidget {
   const LoginView({Key? key}) : super(key: key);
 
   @override
-  State<LoginView> createState() => _LoginViewState();
-}
-
-class _LoginViewState extends State<LoginView> {
-  late final TextEditingController _email;
-  late final TextEditingController _password;
-
-  @override
-  void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _email.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+
+    final ButtonStyle style = ElevatedButton.styleFrom(
+      textStyle: const TextStyle(
+        fontSize: 20,
+      ),
+    );
+
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
         // Any changes made to the AuthBloc states, including to
@@ -48,66 +40,99 @@ class _LoginViewState extends State<LoginView> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Login'),
-        ),
-        // Column will display widgets vertically
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Text(
-                'Please log into your account in order to interact with your notes!',
+        // For the body of the Scaffold, we need to include a SingleChildScrollView
+        // because there are so many text fields and buttons that we could
+        // run into the issue of a overflowing render issue if we do
+        // not allow the user to scroll.
+        body: SingleChildScrollView(
+          // Stack widget is utilized here in order to place the background
+          // image behind the login forms and text buttons that the user
+          // needs to interact with.
+          child: Stack(
+            // To align the widgets in the middle as much as possible, the
+            // alignment is set to Alignment.center
+            alignment: Alignment.center,
+            children: <Widget>[
+              // Displays the background image asset when the LoginView is built.
+              Image.asset(
+                'assets/images/background_3.jpg',
+                width: size.width,
+                height: size.height,
+                fit: BoxFit.fill,
               ),
-              TextField(
-                controller: _email,
-                enableSuggestions: false,
-                autocorrect: false,
-                keyboardType: TextInputType.emailAddress,
-                decoration:
-                    const InputDecoration(hintText: 'Enter your email here'),
-              ),
-              TextField(
-                controller: _password,
-                obscureText: true,
-                enableSuggestions: false,
-                autocorrect: false,
-                decoration:
-                    const InputDecoration(hintText: 'Enter your password here'),
-              ),
-              // BlocListener will listen to the changes in the state and will
-              // handle dialogs if the Bloc fails to output the AuthStateLoggedIn
-              // AuthState after the AuthEventLogIn has been invoked.
-              TextButton(
-                onPressed: () async {
-                  final email = _email.text;
-                  final password = _password.text;
-                  context.read<AuthBloc>().add(
-                        AuthEventLogIn(
-                          email,
-                          password,
-                        ),
-                      );
-                },
-                child: const Text('Log in'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Add the AuthEventForgotPassword event so that AuthBloc
-                  // sends the user to the ForgotPasswordView.
-                  context.read<AuthBloc>().add(
-                        const AuthEventForgotPassword(),
-                      );
-                },
-                child: const Text('I forgot my password'),
-              ),
-              TextButton(
-                onPressed: () {
-                  context.read<AuthBloc>().add(
-                        const AuthEventShouldRegister(),
-                      );
-                },
-                child: const Text('Not registered yet? Register here!'),
+              // Displays the Text Heading and LoginForm widget all vertically
+              // stacked and directly over the background image.
+              Column(
+                // Use MainAxisSize.min to avoid overreaching to the edges
+                // of the phone/tablet screen.
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  // Text Heading for the LoginView
+                  const Text(
+                    'Log in and inspire yourself today',
+                    style: TextStyle(
+                      fontFamily: courgetteFamily,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 30.0,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  // Divider between the Text Heading and the
+                  // LoginForm widget
+                  const SizedBox(
+                    height: 30.0,
+                  ),
+                  // Display the contents of the LoginForm widget last.
+                  const LoginForm(),
+                  // SizedBox widget that separates the Form widgets and the buttons
+                  // for resetting a password or registering.
+                  const SizedBox(
+                    height: 30.0,
+                  ),
+                  // Reset Password Button:
+                  // An elevated button that initiates a BLoC event called
+                  // AuthEventForgotPassword. It is also styled to fit
+                  // the theming of the application.
+                  ElevatedButton(
+                    style: style,
+                    onPressed: () {
+                      // Add the AuthEventForgotPassword event so that AuthBloc
+                      // sends the user to the ForgotPasswordView.
+                      context.read<AuthBloc>().add(
+                            const AuthEventForgotPassword(),
+                          );
+                    },
+                    child: const Text(
+                      'I forgot my password',
+                      style: TextStyle(
+                        fontFamily: courgetteFamily,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  // Register Password Button:
+                  // An elevated button that initiates a BLoC event called
+                  // AuthEventForgotPassword. It is also styled to fit
+                  // the theming of the application.
+                  ElevatedButton(
+                    style: style,
+                    onPressed: () {
+                      context.read<AuthBloc>().add(
+                            const AuthEventShouldRegister(),
+                          );
+                    },
+                    child: const Text(
+                      'Not registered yet? Register here!',
+                      style: TextStyle(
+                        fontFamily: courgetteFamily,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

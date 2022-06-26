@@ -61,6 +61,9 @@ dev_dependencies:
 # The following section is specific to Flutter packages.
 flutter:
   assets:
+    # background image by _
+    # background_2 image by _
+    # background_3 Vincentiu Solomon on Stocksnap.io
     - assets/images/
 
   fonts:
