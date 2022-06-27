@@ -4,6 +4,7 @@ import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/utilities/dialogs/error_dialog.dart';
 import 'package:mobile_motivation/utilities/dialogs/password_reset_email_sent_dialog.dart';
+import 'package:mobile_motivation/views/main_ui/custom_widgets/reset_password_form.dart';
 
 class ForgotPasswordView extends StatefulWidget {
   const ForgotPasswordView({Key? key}) : super(key: key);
@@ -63,37 +64,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'If you forgot your password, simply enter your email and press the button so that we can send you an email to reset your password',
-                    style: TextStyle(
-                      fontFamily: courgetteFamily,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 30.0,
-                      color: Colors.white,
-                    ),
-                  ),
-                  TextField(
-                    keyboardType: TextInputType.emailAddress,
-                    autocorrect: false,
-                    autofocus: true,
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Your email address...',
-                    ),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      final email = _controller.text;
-
-                      // Add AuthEventForgotPassword event with an email
-                      // which will trigger a loading screen while the AuthBloc
-                      // tells Firebase to send a reset password email.
-                      context.read<AuthBloc>().add(
-                            AuthEventForgotPassword(email: email),
-                          );
-                    },
-                    child: const Text('Send me a password reset link'),
-                  ),
+                  const ResetPasswordForm(),
                   TextButton(
                     onPressed: () {
                       // Add AuthEventLogOut event to go back to the login screen.
