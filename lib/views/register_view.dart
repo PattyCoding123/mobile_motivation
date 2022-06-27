@@ -74,7 +74,7 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   // Text Heading, which is a quote from Sir Francis Bacon.
                   const Text(
-                    'Knowledge is Power\n- Sir Francis Bacon.',
+                    'Knowledge is Power\n- Sir Francis Bacon',
                     style: TextStyle(
                       fontFamily: courgetteFamily,
                       fontWeight: FontWeight.bold,
