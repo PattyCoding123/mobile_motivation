@@ -43,6 +43,8 @@ dependencies:
   firebase_analytics: ^9.1.10
   cloud_firestore: ^3.1.18
   equatable: ^2.0.3
+  settings_ui: ^2.0.2
+  shared_preferences: ^2.0.15
 
 dev_dependencies:
   flutter_test:
