@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile_motivation/constants/font_constants.dart';
 
 // typedef function that returns a mapping of string keys with value T?.
 // The function will be defined as a map of String:T? values
@@ -18,8 +19,21 @@ Future<T?> showGenericDialog<T>({
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(title),
-        content: Text(content),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontFamily: courgetteFamily,
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          content,
+          style: const TextStyle(
+            fontFamily: courgetteFamily,
+            fontSize: 20.0,
+          ),
+        ),
 
         // We will create a list of TextButtons using the map that was returned
         // optionsBuilder. optionTitle is the key for each pair.
@@ -33,7 +47,13 @@ Future<T?> showGenericDialog<T>({
                 Navigator.of(context).pop();
               }
             },
-            child: Text(optionTitle),
+            child: Text(
+              optionTitle,
+              style: const TextStyle(
+                fontFamily: courgetteFamily,
+                fontSize: 20.0,
+              ),
+            ),
           );
         }).toList(),
       );

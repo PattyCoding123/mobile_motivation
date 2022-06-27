@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart' show immutable;
-import 'package:equatable/equatable.dart';
-import 'package:mobile_motivation/services/auth/auth_user.dart';
+part of 'auth_bloc.dart';
 
 @immutable
 abstract class AuthState {
@@ -20,7 +18,7 @@ class AuthStateUninitialized extends AuthState {
 
 // State of AuthState that indicates the user is registering.
 class AuthStateRegistering extends AuthState {
-  final Exception? exception;
+  final AuthError? exception;
   const AuthStateRegistering({
     required this.exception,
     required bool isLoading,
@@ -29,7 +27,7 @@ class AuthStateRegistering extends AuthState {
 
 // State of AuthState that indicates the user forgot their password.
 class AuthStateForgotPassword extends AuthState {
-  final Exception? exception;
+  final AuthError? exception;
   final bool hasSentEmail;
   const AuthStateForgotPassword({
     required this.exception,
@@ -39,12 +37,21 @@ class AuthStateForgotPassword extends AuthState {
 }
 
 // State of AuthState that indicates the user is logged in.
-class AuthStateLoggedIn extends AuthState {
+class AuthStateLoggedIn extends AuthState with EquatableMixin {
+  final Exception? exception;
   final AuthUser user;
+  final QuoteModel? quote;
+  final Stream<Iterable<CloudQuote>>? favQuotes;
   const AuthStateLoggedIn({
     required this.user,
     required bool isLoading,
+    this.exception,
+    this.favQuotes,
+    this.quote,
   }) : super(isLoading: isLoading);
+
+  @override
+  List<Object?> get props => [quote, favQuotes];
 }
 
 // State of AuthState that indicates the user must verify their email.
@@ -59,7 +66,7 @@ class AuthStateNeedsVerification extends AuthState {
 // to differentiate the different states of AuthStateLoggedOut.
 // This state will also determine the loading screen for logging in/out.
 class AuthStateLoggedOut extends AuthState with EquatableMixin {
-  final Exception? exception;
+  final AuthError? exception;
   const AuthStateLoggedOut({
     required this.exception,
     required bool isLoading,
@@ -71,4 +78,37 @@ class AuthStateLoggedOut extends AuthState with EquatableMixin {
 
   @override
   List<Object?> get props => [exception, isLoading];
+}
+
+extension GetUser on AuthState {
+  AuthUser? get user {
+    final cls = this;
+    if (cls is AuthStateLoggedIn) {
+      return cls.user;
+    } else {
+      return null;
+    }
+  }
+}
+
+extension GetQuoteOfTheDay on AuthState {
+  QuoteModel? get quote {
+    final cls = this;
+    if (cls is AuthStateLoggedIn) {
+      return cls.quote;
+    } else {
+      return null;
+    }
+  }
+}
+
+extension GetQuotes on AuthState {
+  Stream<Iterable<CloudQuote>>? get favQuotes {
+    final cls = this;
+    if (cls is AuthStateLoggedIn) {
+      return cls.favQuotes;
+    } else {
+      return null;
+    }
+  }
 }
