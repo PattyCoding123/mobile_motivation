@@ -45,6 +45,7 @@ class _ResetPasswordForm extends State<ResetPasswordForm> {
       child: Form(
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Header for the Form
             const Text(
