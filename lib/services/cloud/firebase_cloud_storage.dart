@@ -86,7 +86,7 @@ class FirebaseCloudStorage {
       },
     );
 
-    // If quote exists, add it the collection.
+    // If the quote does not exist, add it the collection.
     if (!doesQuoteExist) {
       quotes.add({
         ownerUserIdFieldName: ownerUserId,
