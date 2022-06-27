@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_motivation/constants/elevated_button_style.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/services/auth/auth_errors.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
@@ -20,30 +21,8 @@ class RegisterView extends StatefulWidget {
 }
 
 class _RegisterViewState extends State<RegisterView> {
-  late final TextEditingController _email;
-  late final TextEditingController _password;
-
-  @override
-  void initState() {
-    _email = TextEditingController();
-    _password = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _email.dispose();
-    _password.dispose();
-    super.dispose();
-  }
-
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle style = ElevatedButton.styleFrom(
-      textStyle: const TextStyle(
-        fontSize: 20,
-      ),
-    );
     Size size = MediaQuery.of(context).size;
 
     return BlocListener<AuthBloc, AuthState>(
@@ -95,7 +74,7 @@ class _RegisterViewState extends State<RegisterView> {
                 children: [
                   // Text Heading, which is a quote from Sir Francis Bacon.
                   const Text(
-                    'Knowledge is Power\n- Sir Francis Bacon',
+                    'Knowledge is Power\n- Sir Francis Bacon.',
                     style: TextStyle(
                       fontFamily: courgetteFamily,
                       fontWeight: FontWeight.bold,
@@ -135,10 +114,6 @@ class _RegisterViewState extends State<RegisterView> {
                     },
                     child: const Text(
                       'Already registered? Login here!',
-                      style: TextStyle(
-                        fontFamily: courgetteFamily,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ),
                 ],

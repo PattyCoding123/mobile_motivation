@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_motivation/constants/elevated_button_style.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 
@@ -35,12 +36,6 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    final ButtonStyle style = ElevatedButton.styleFrom(
-      textStyle: const TextStyle(
-        fontSize: 20,
-      ),
-    );
-
     // The RegisterForm will be a Form with text fields and the register button
     return Card(
       child: Form(
@@ -117,10 +112,6 @@ class _RegisterFormState extends State<RegisterForm> {
               style: style,
               child: const Text(
                 'Register',
-                style: TextStyle(
-                  fontFamily: courgetteFamily,
-                  fontWeight: FontWeight.bold,
-                ),
               ),
             ),
           ],

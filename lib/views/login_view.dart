@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_motivation/constants/elevated_button_style.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
 import 'package:mobile_motivation/utilities/dialogs/error_dialog.dart';
@@ -15,12 +16,6 @@ class LoginView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
-
-    final ButtonStyle style = ElevatedButton.styleFrom(
-      textStyle: const TextStyle(
-        fontSize: 20,
-      ),
-    );
 
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) async {
@@ -135,10 +130,6 @@ class LoginView extends StatelessWidget {
                     },
                     child: const Text(
                       'Not registered yet? Register here!',
-                      style: TextStyle(
-                        fontFamily: courgetteFamily,
-                        fontWeight: FontWeight.bold,
-                      ),
                     ),
                   ),
                 ],
