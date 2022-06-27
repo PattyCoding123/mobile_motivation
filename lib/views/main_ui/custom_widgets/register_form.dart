@@ -108,7 +108,7 @@ class _RegisterFormState extends State<RegisterForm> {
                 final email = _email.text;
                 final password = _password.text;
                 context.read<AuthBloc>().add(
-                      AuthEventLogIn(
+                      AuthEventRegister(
                         email,
                         password,
                       ),

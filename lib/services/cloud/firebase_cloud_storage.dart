@@ -79,15 +79,15 @@ class FirebaseCloudStorage {
         .then(
       (docSnapshot) {
         if (docSnapshot.size != 0) {
-          return false;
-        } else {
           return true;
+        } else {
+          return false;
         }
       },
     );
 
     // If quote exists, add it the collection.
-    if (doesQuoteExist) {
+    if (!doesQuoteExist) {
       quotes.add({
         ownerUserIdFieldName: ownerUserId,
         textFieldName: quote.quoteText,
