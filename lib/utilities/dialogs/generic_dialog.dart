@@ -23,12 +23,15 @@ Future<T?> showGenericDialog<T>({
           title,
           style: const TextStyle(
             fontFamily: courgetteFamily,
+            fontSize: 25.0,
+            fontWeight: FontWeight.bold,
           ),
         ),
         content: Text(
           content,
           style: const TextStyle(
             fontFamily: courgetteFamily,
+            fontSize: 20.0,
           ),
         ),
 
@@ -48,6 +51,7 @@ Future<T?> showGenericDialog<T>({
               optionTitle,
               style: const TextStyle(
                 fontFamily: courgetteFamily,
+                fontSize: 20.0,
               ),
             ),
           );

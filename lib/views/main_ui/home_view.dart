@@ -72,7 +72,13 @@ class _HomeViewState extends State<HomeView> {
                   return const [
                     PopupMenuItem<MenuAction>(
                       value: MenuAction.logout,
-                      child: Text('Log out'),
+                      child: Text(
+                        'Log out',
+                        style: TextStyle(
+                          fontFamily: courgetteFamily,
+                          fontSize: 20.0,
+                        ),
+                      ),
                     ),
                   ];
                 },
