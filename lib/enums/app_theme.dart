@@ -8,10 +8,12 @@ enum AppTheme {
 final appThemeData = {
   AppTheme.darkTheme: ThemeData(
     brightness: Brightness.dark,
-    primaryColor: const Color(0x0001d97c),
+    scaffoldBackgroundColor: const Color(0x0001d97c),
+    colorScheme: const ColorScheme.dark(),
   ),
   AppTheme.lightTheme: ThemeData(
     brightness: Brightness.light,
-    primaryColor: Colors.white,
+    scaffoldBackgroundColor: Colors.white,
+    colorScheme: const ColorScheme.light(),
   )
 };
