@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:mobile_motivation/data/quote_model.dart';
+import 'package:mobile_motivation/models/quote_model.dart';
 
 class ApiProvider {
   final url = 'https://zenquotes.io/api/today';

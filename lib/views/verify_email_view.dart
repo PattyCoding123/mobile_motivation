@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/constants/elevated_button_style.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
+import 'package:mobile_motivation/services/auth/authBloc/auth_bloc.dart';
 
 // The following view is responsible for displaying a message to the user
 // that they must continue by verifying their account. This will pop

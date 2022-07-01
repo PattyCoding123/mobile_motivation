@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:mobile_motivation/data/quote_model.dart';
+import 'package:mobile_motivation/models/quote_model.dart';
 import 'package:mobile_motivation/services/api/api_exception.dart';
 import 'package:mobile_motivation/services/api/api_provider.dart';
 import 'package:mobile_motivation/services/auth/auth_errors.dart';

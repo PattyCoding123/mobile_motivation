@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_motivation/constants/routes.dart';
 import 'package:mobile_motivation/helpers/loading/loading_screen.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
+import 'package:mobile_motivation/models/preferences.dart';
+import 'package:mobile_motivation/services/auth/authBloc/auth_bloc.dart';
 import 'package:mobile_motivation/services/auth/firebase_auth_provider.dart';
+import 'package:mobile_motivation/services/system/cubit/preferences_cubit.dart';
+import 'package:mobile_motivation/services/system/preferences_service.dart';
 import 'package:mobile_motivation/views/forgot_password_view.dart';
 import 'package:mobile_motivation/views/login_view.dart';
 import 'package:mobile_motivation/views/main_ui/home_view.dart';
+import 'package:mobile_motivation/views/main_ui/settings_view.dart';
 import 'package:mobile_motivation/views/register_view.dart';
 import 'package:mobile_motivation/views/verify_email_view.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   // Since our program will handle asynchronous tasks, we need
@@ -15,21 +21,58 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   runApp(
-    MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.deepPurple,
-      ),
-      // BlocProvider provides the AuthBloc instance and has a child widget
-      // which is the HomePage (since the widget must return a BlocBuilder).
-      home: BlocProvider<AuthBloc>(
-        create: (context) => AuthBloc(
-          FirebaseAuthProvider(),
-        ),
-        child: const HomePage(),
-      ),
-    ),
+    const MainApp(),
   );
+}
+
+class MainApp extends StatelessWidget {
+  Future<PreferencesCubit> buildBloc() async {
+    final prefs = await SharedPreferences.getInstance();
+    final service = MyPreferencesService(
+      prefs,
+    );
+
+    return PreferencesCubit(
+      service,
+      service.get(),
+    );
+  }
+
+  const MainApp({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<PreferencesCubit>(
+      future: buildBloc(),
+      builder: (context, blocSnapshot) {
+        if (blocSnapshot.hasData && blocSnapshot.data != null) {
+          return BlocProvider(
+            create: (_) => blocSnapshot.data!,
+            child: BlocBuilder<PreferencesCubit, Preferences>(
+              builder: (context, preferences) => MaterialApp(
+                title: 'Flutter Demo',
+                theme: ThemeData.light(),
+                darkTheme: ThemeData.dark(),
+                themeMode: preferences.themeMode,
+                // BlocProvider provides the AuthBloc instance and has a child widget
+                // which is the HomePage (since the widget must return a BlocBuilder).
+                home: BlocProvider<AuthBloc>(
+                  create: (context) => AuthBloc(
+                    FirebaseAuthProvider(),
+                  ),
+                  child: const HomePage(),
+                ),
+                routes: {settingsRoute: (context) => const SettingsPage()},
+              ),
+            ),
+          );
+        }
+        return const SizedBox.shrink();
+      },
+    );
+  }
 }
 
 // HomePage will take whatever states are being produced by our AuthBloc
