@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
+import 'package:mobile_motivation/constants/routes.dart';
 import 'package:mobile_motivation/utilities/dialogs/logout_dialog.dart';
 import 'package:mobile_motivation/views/main_ui/show_quote_view.dart';
 import 'package:mobile_motivation/enums/menu_action.dart';
@@ -18,8 +19,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
-    context.read<AuthBloc>().add(const AuthEventFetchQuote());
-    context.read<AuthBloc>().add(const AuthEventGetFavoriteQuotes());
     // _notesService = FirebaseCloudStorage();
     super.initState();
   }
@@ -60,21 +59,36 @@ class _HomeViewState extends State<HomeView> {
               onSelected: (value) async {
                 // Use a switch to deal with the PopupMenuItems!
                 switch (value) {
+                  case MenuAction.settings:
+                    Navigator.of(context).pushNamed(settingsRoute);
+                    break;
+
                   case MenuAction.logout:
                     final shouldLogout = await showLogOutDialog(context);
                     if (shouldLogout) {
                       if (!mounted) return;
-                      context.read<AuthBloc>().add(const AuthEventLogOut());
+                      context.read<AuthBloc>().add(
+                            const AuthEventLogOut(),
+                          );
                     }
-                  // Navigator.of(context).pushNamed(settingsRoute);
                 }
               },
               itemBuilder: (context) {
                 return const [
                   PopupMenuItem<MenuAction>(
+                    value: MenuAction.settings,
+                    child: Text(
+                      'Settings',
+                      style: TextStyle(
+                        fontFamily: courgetteFamily,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                  PopupMenuItem<MenuAction>(
                     value: MenuAction.logout,
                     child: Text(
-                      'Log out',
+                      'Logout',
                       style: TextStyle(
                         fontFamily: courgetteFamily,
                         fontSize: 20.0,

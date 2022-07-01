@@ -80,7 +80,6 @@ class ShowQuoteView extends StatelessWidget {
                         content: Text(
                           'Added to your favorite quotes',
                           style: TextStyle(
-                            color: Colors.white,
                             fontSize: 20.0,
                           ),
                         ),

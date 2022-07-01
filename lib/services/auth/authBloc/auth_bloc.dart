@@ -62,6 +62,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           ),
         );
 
+        // Try sending an email, we will emit either a success or failure
+        // state depending on whether a password reset email was sent.
         bool didSendEmail;
         Exception? exception;
         try {
@@ -109,8 +111,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event,
         emit,
       ) async {
+        // Gather the email and password information from the event.
         final email = event.email;
         final password = event.password;
+
+        // Try and create a new firebase user, and if done succesfully,
+        // send an email verification to their email address.
+        // Handle registration exception by emitting the Registering state
+        // with an error from AuthError (FirebaseAuthExceptions)
         try {
           await provider.createUser(
             email: email,
@@ -123,10 +131,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           );
         } on Exception catch (e) {
-          emit(AuthStateRegistering(
-            exception: AuthError.fromFirebase(e),
-            isLoading: false,
-          ));
+          emit(
+            AuthStateRegistering(
+              exception: AuthError.fromFirebase(e),
+              isLoading: false,
+            ),
+          );
         }
       },
     );
@@ -137,8 +147,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         event,
         emit,
       ) async {
+        // Initialize the Firebase provider for the specified application
+        // and device, and try to acquire the current user.
         await provider.initialize();
         final user = provider.currentUser;
+
+        // Emit the AuthStateLoggedOut state if the user variable is null.
         if (user == null) {
           emit(
             const AuthStateLoggedOut(
@@ -147,20 +161,52 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           );
         } else if (!user.isEmailVerified) {
+          // Emit the AuthStateNeedsVerification state if the authenticated user
+          // that is currently logged in with Firebase has still
+          // not verified their account.
           emit(
             const AuthStateNeedsVerification(
               isLoading: false,
             ),
           );
         } else {
-          emit(
-            AuthStateLoggedIn(
-              user: user,
-              isLoading: false,
-              quote: state.quote,
-              favQuotes: state.favQuotes,
-            ),
+          // If the user is not null and verified, then retrieve
+          // data from the API and Firestore database.
+
+          // Get favorite quotes from firestore database
+          final favQuotes = FirebaseCloudStorage().allQuotes(
+            ownerUserId: user.id,
           );
+
+          // Implement a try block in the case that we fail to retrieve data
+          // from the API.
+          try {
+            // Get quote from the API!
+            final quoteOfTheDay = await ApiProvider().fetchQuote();
+
+            // Emit the AuthStateLoggedIn state with the quote of the day
+            // and the user's favorite quotes.
+            emit(
+              AuthStateLoggedIn(
+                user: user,
+                isLoading: false,
+                quote: quoteOfTheDay,
+                favQuotes: favQuotes,
+              ),
+            );
+          } on NetworkErrorAuthException catch (e) {
+            // If there was an error with retrieving data from the API, emit
+            // the AuthStateLoggedIn state but with only the user's favorite quotes.
+            emit(
+              AuthStateLoggedIn(
+                user: user,
+                isLoading: false,
+                exception: e,
+                quote: state.quote,
+                favQuotes: favQuotes,
+              ),
+            );
+          }
         }
       },
     );
@@ -209,21 +255,51 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             // If the user is verified, then the AuthBloc will emit
             // the AuthStateLoggedOut state with no exception or loading
             // indication which disables the loading screen, and then
-            // it will emit the AuthStateLoggedIn state.
+            // it will emit the AuthStateLoggedIn state with the quote
+            // from the API and the favorited quotes in Firestore database.
             emit(
               const AuthStateLoggedOut(
                 exception: null,
                 isLoading: false,
               ),
             );
-            emit(
-              AuthStateLoggedIn(
-                user: user,
-                isLoading: false,
-                quote: state.quote,
-                favQuotes: state.favQuotes,
-              ),
+
+            // Get favorite quotes from firestore database
+            final favQuotes = FirebaseCloudStorage().allQuotes(
+              ownerUserId: user.id,
             );
+
+            // Nested try-catch block for getting the quote from
+            // the API which might throw an exception in the case
+            // we fail to retrieve data from the API!
+            try {
+              // Get quote from the API!
+              final quoteOfTheDay = await ApiProvider().fetchQuote();
+
+              // Emit the AuthStateLoggedIn state with the user's favorite
+              // quotes and the quote of the day.
+              emit(
+                AuthStateLoggedIn(
+                  user: user,
+                  isLoading: false,
+                  quote: quoteOfTheDay,
+                  favQuotes: favQuotes,
+                ),
+              );
+            } on NetworkErrorAuthException catch (e) {
+              // If there was an error retrieving the quote from the API,
+              // emit the AuthStateLoggedIn state with an exception
+              // and only the user's favorite quotes.
+              emit(
+                AuthStateLoggedIn(
+                  user: user,
+                  isLoading: false,
+                  exception: e,
+                  quote: state.quote,
+                  favQuotes: favQuotes,
+                ),
+              );
+            }
           }
         } on Exception catch (e) {
           // On an exception, emit the AuthStateLoggedOut state
@@ -267,86 +343,85 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
+    // [Note: No longer using for now]
     // Generate quote event. Only done if the user is logged in!
-    on<AuthEventFetchQuote>(
-      (
-        event,
-        emit,
-      ) async {
-        final user = provider.currentUser;
+    // on<AuthEventFetchQuote>(
+    //   (
+    //     event,
+    //     emit,
+    //   ) async {
+    //     final user = provider.currentUser;
 
-        if (user == null) {
-          emit(
-            const AuthStateLoggedOut(exception: null, isLoading: false),
-          );
-        }
+    //     if (user == null) {
+    //       emit(
+    //         const AuthStateLoggedOut(exception: null, isLoading: false),
+    //       );
+    //     }
 
-        try {
-          emit(
-            AuthStateLoggedIn(
-              user: user!,
-              quote: state.quote,
-              favQuotes: state.favQuotes,
-              isLoading: true,
-            ),
-          );
+    //     try {
+    //       emit(
+    //         AuthStateLoggedIn(
+    //           user: user!,
+    //           quote: state.quote,
+    //           favQuotes: state.favQuotes,
+    //           isLoading: true,
+    //         ),
+    //       );
 
-          final quoteOfTheDay = await ApiProvider().fetchQuote();
+    //       final quoteOfTheDay = await ApiProvider().fetchQuote();
 
-          emit(
-            AuthStateLoggedIn(
-              user: user,
-              isLoading: false,
-              quote: quoteOfTheDay,
-              favQuotes: state.favQuotes,
-            ),
-          );
-        } on NetworkErrorAuthException catch (e) {
-          emit(
-            AuthStateLoggedIn(
-              user: user!,
-              isLoading: false,
-              exception: e,
-              quote: state.quote,
-              favQuotes: state.favQuotes,
-            ),
-          );
-        }
-      },
-    );
+    //       emit(
+    //         AuthStateLoggedIn(
+    //           user: user,
+    //           isLoading: false,
+    //           quote: quoteOfTheDay,
+    //           favQuotes: state.favQuotes,
+    //         ),
+    //       );
+    //     } on NetworkErrorAuthException catch (e) {
+    //       emit(
+    //         AuthStateLoggedIn(
+    //           user: user!,
+    //           isLoading: false,
+    //           exception: e,
+    //           quote: state.quote,
+    //           favQuotes: state.favQuotes,
+    //         ),
+    //       );
+    //     }
+    //   },
+    // );
 
+    // [Note: No longer using for now]
     // Handle retrieving notes from Cloud Firestore!
-    on<AuthEventGetFavoriteQuotes>(
-      (
-        event,
-        emit,
-      ) {
-        final user = provider.currentUser;
+    // on<AuthEventGetFavoriteQuotes>(
+    //   (
+    //     event,
+    //     emit,
+    //   ) {
+    //     final user = provider.currentUser;
 
-        if (user == null) {
-          emit(
-            const AuthStateLoggedOut(
-              exception: null,
-              isLoading: false,
-            ),
-          );
-        }
+    //     if (user == null) {
+    //       emit(
+    //         const AuthStateLoggedOut(
+    //           exception: null,
+    //           isLoading: false,
+    //         ),
+    //       );
+    //     }
 
-        final favQuotes = FirebaseCloudStorage().allQuotes(
-          ownerUserId: user!.id,
-        );
+    //     emit(
+    //       AuthStateLoggedIn(
+    //         user: user,
+    //         isLoading: false,
+    //         quote: state.quote,
+    //         favQuotes: favQuotes,
+    //       ),
+    //     );
+    //   },
+    // );
 
-        emit(
-          AuthStateLoggedIn(
-            user: user,
-            isLoading: false,
-            quote: state.quote,
-            favQuotes: favQuotes,
-          ),
-        );
-      },
-    );
-
+    // Handle favoriting a quote
     on<AuthEventAddFavoriteQuote>(
       (
         event,
@@ -354,6 +429,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       ) async {
         final user = provider.currentUser;
 
+        // If the current user is null, then immediately log out the user.
         if (user == null) {
           emit(
             const AuthStateLoggedOut(
@@ -362,11 +438,16 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             ),
           );
         } else {
+          // Since the favorite feature is only accessible for verified
+          // users, we do not need to check the verification state. Instead,
+          // call the createNewQuote method from our FirebaseCloudStorage
+          // services class.
           await FirebaseCloudStorage().createNewQuote(
             ownerUserId: user.id,
             quote: event.quote,
           );
 
+          // Emit the AuthStateLoggedIn state will all the current state data.
           emit(
             AuthStateLoggedIn(
               user: user,
@@ -379,39 +460,50 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       },
     );
 
-    on<AuthEventDeleteQuote>((event, emit) {
-      final user = provider.currentUser;
-      if (user == null) {
-        emit(
-          const AuthStateLoggedOut(
-            exception: null,
-            isLoading: false,
-          ),
-        );
-      }
-      try {
-        FirebaseCloudStorage().deleteQuote(
-          documentId: event.favCloudQuote.documentId,
-        );
+    // Handle deleting a quote.
+    on<AuthEventDeleteQuote>(
+      (event, emit) {
+        final user = provider.currentUser;
+        // If the current user is null, then immediately log out the user.
+        if (user == null) {
+          emit(
+            const AuthStateLoggedOut(
+              exception: null,
+              isLoading: false,
+            ),
+          );
+        }
+        // Since the delete feature is only accessible for verified
+        // users, we do not need to check the verification state. Instead,
+        // call the deleteQuote method from our FirebaseCloudStorage
+        // services class. It is in a try block because we could run into the
+        // Firestore exception of failing to delete a quote.
+        try {
+          FirebaseCloudStorage().deleteQuote(
+            documentId: event.favCloudQuote.documentId,
+          );
 
-        emit(
-          AuthStateLoggedIn(
+          emit(
+            AuthStateLoggedIn(
+                user: user!,
+                isLoading: false,
+                quote: state.quote,
+                favQuotes: state.favQuotes),
+          );
+        } on CloudStorageException catch (e) {
+          // If an exception is thrown, just emit the AuthStateLoggedIn state
+          // with all the state data and an exception.
+          emit(
+            AuthStateLoggedIn(
               user: user!,
               isLoading: false,
               quote: state.quote,
-              favQuotes: state.favQuotes),
-        );
-      } on CloudStorageException catch (e) {
-        emit(
-          AuthStateLoggedIn(
-            user: user!,
-            isLoading: false,
-            quote: state.quote,
-            favQuotes: state.favQuotes,
-            exception: e,
-          ),
-        );
-      }
-    });
+              favQuotes: state.favQuotes,
+              exception: e,
+            ),
+          );
+        }
+      },
+    );
   }
 }

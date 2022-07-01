@@ -21,8 +21,7 @@ class Preferences {
   // be used to control the app's themes when the user is in the app.)
   final ThemeMode themeMode;
 
-  // Constructor which initializes this Preferences' theme mode
-  // which is
+  // Constructor which initializes this Preferences' theme mode member.
   Preferences(this.themeMode);
 
   // In the case there are no system preferences already stored,
@@ -35,18 +34,27 @@ class Preferences {
   }
 
   // In the case there are system preferences already stored,
-  // they are already stored in the form of a json object which
+  // they are already stored in the form of a json object which.
   factory Preferences.fromJson(json) => _$PreferencesFromJson(
         Map<String, dynamic>.from(
           json,
         ),
       );
 
+  // Method to copy and return a Preferences object that
+  // is initialized with the input theme
+  Preferences copyWith(
+    ThemeMode? themeMode,
+  ) {
+    return Preferences(themeMode ?? this.themeMode);
+  }
+
   // toJson method that will convert a Preferences object into a json object.
   Map<String, dynamic> toJson() => _$PreferencesToJson(
         this,
       );
 
+  // Comparison operator for Preferences to check if they are the same.
   @override
   bool operator ==(Object other) {
     return identical(
@@ -56,11 +64,16 @@ class Preferences {
         (other is Preferences && themeMode == other.themeMode);
   }
 
+  // Testing purposes, to check which theme mode is being pulled
+  // from the Preferences.
   @override
   String toString() {
     return 'Preferences($themeMode)';
   }
 
+  // When overriding the == operator, it is standard to override the
+  // get hashCode operator match what will be associated when comparing
+  // Preference objects.
   @override
   int get hashCode => themeMode.hashCode;
 }

@@ -20,15 +20,22 @@ void main() async {
   // to ensure that our Widgets are binded.
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Call the runApp function on the MainApp class widget.
   runApp(
     const MainApp(),
   );
 }
 
+// Here, we need to have our main app as a stateless widget
+// in order to delegate control to the PreferencesCubit
 class MainApp extends StatelessWidget {
+  // Build the PreferencesBloc
   Future<PreferencesCubit> buildBloc() async {
+    // Get the instance of shared preferences
+    // and use it to initiaze a MainPreferencesService object, and
+    // use it in the Bloc
     final prefs = await SharedPreferences.getInstance();
-    final service = MyPreferencesService(
+    final service = MainPreferencesService(
       prefs,
     );
 
@@ -44,17 +51,31 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Here, we utilize a FutureBuilder because we will be expecting
+    // a bloc of Preferences from the buildBloc method asynchronously.
     return FutureBuilder<PreferencesCubit>(
       future: buildBloc(),
       builder: (context, blocSnapshot) {
         if (blocSnapshot.hasData && blocSnapshot.data != null) {
+          // Utilize a BlocBuilder to delegate control of the theme
+          // to the Preferences bloc.
           return BlocProvider(
             create: (_) => blocSnapshot.data!,
             child: BlocBuilder<PreferencesCubit, Preferences>(
               builder: (context, preferences) => MaterialApp(
                 title: 'Flutter Demo',
-                theme: ThemeData.light(),
-                darkTheme: ThemeData.dark(),
+                // Change theme data of light and dark such that each
+                // utilize the deep purple color for the background of app bars.
+                theme: ThemeData.light().copyWith(
+                  appBarTheme: const AppBarTheme(
+                    backgroundColor: Colors.deepPurple,
+                  ),
+                ),
+                darkTheme: ThemeData.dark().copyWith(
+                  appBarTheme: const AppBarTheme(
+                    backgroundColor: Colors.deepPurple,
+                  ),
+                ),
                 themeMode: preferences.themeMode,
                 // BlocProvider provides the AuthBloc instance and has a child widget
                 // which is the HomePage (since the widget must return a BlocBuilder).

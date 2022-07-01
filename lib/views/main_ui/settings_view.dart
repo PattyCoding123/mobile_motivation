@@ -4,13 +4,18 @@ import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/models/preferences.dart';
 import 'package:mobile_motivation/services/system/cubit/preferences_cubit.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
 
   @override
+  State<SettingsPage> createState() => _SettingsPageState();
+}
+
+class _SettingsPageState extends State<SettingsPage> {
+  @override
   Widget build(BuildContext context) {
     return BlocBuilder<PreferencesCubit, Preferences>(
-      builder: (context, state) {
+      builder: (context, preferences) {
         return Scaffold(
           appBar: AppBar(
             title: const Text(
@@ -20,9 +25,96 @@ class SettingsPage extends StatelessWidget {
                 fontSize: 30.0,
               ),
             ),
+            automaticallyImplyLeading: true,
+            actions: <Widget>[
+              IconButton(
+                onPressed:
+                    context.read<PreferencesCubit>().deleteAllPreferences,
+                icon: const Icon(
+                  Icons.restore,
+                ),
+              )
+            ],
+          ),
+          body: ListView(
+            children: [
+              _buildThemeSelectionSettings(
+                preferences,
+                context,
+              ),
+            ],
           ),
         );
       },
+    );
+  }
+
+  Widget _buildThemeSelectionSettings(
+    Preferences preferences,
+    BuildContext context,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.all(
+        8.0,
+      ),
+      child: Column(
+        children: <Widget>[
+          RadioListTile<ThemeMode>(
+            title: const Text(
+              "Dark Mode",
+              style: TextStyle(
+                fontFamily: courgetteFamily,
+                fontSize: 25.0,
+              ),
+            ),
+            value: ThemeMode.dark,
+            groupValue: preferences.themeMode,
+            onChanged: (_) {
+              context.read<PreferencesCubit>().changePreferences(
+                    preferences.copyWith(
+                      ThemeMode.dark,
+                    ),
+                  );
+            },
+          ),
+          RadioListTile<ThemeMode>(
+            title: const Text(
+              "Light Mode",
+              style: TextStyle(
+                fontFamily: courgetteFamily,
+                fontSize: 25.0,
+              ),
+            ),
+            value: ThemeMode.light,
+            groupValue: preferences.themeMode,
+            onChanged: (_) {
+              context.read<PreferencesCubit>().changePreferences(
+                    preferences.copyWith(
+                      ThemeMode.light,
+                    ),
+                  );
+            },
+          ),
+          RadioListTile<ThemeMode>(
+            title: const Text(
+              "Automatic (follows system setting)",
+              style: TextStyle(
+                fontFamily: courgetteFamily,
+                fontSize: 25.0,
+              ),
+            ),
+            value: ThemeMode.system,
+            groupValue: preferences.themeMode,
+            onChanged: (_) {
+              context.read<PreferencesCubit>().changePreferences(
+                    preferences.copyWith(
+                      ThemeMode.system,
+                    ),
+                  );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

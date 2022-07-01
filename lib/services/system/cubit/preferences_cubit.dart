@@ -2,8 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:mobile_motivation/models/preferences.dart';
 import 'package:mobile_motivation/services/system/preferences_service.dart';
 
-// Fluttter Bloc to control night and day themes
+// Flutter Bloc to control night and day themes
 class PreferencesCubit extends Cubit<Preferences> {
+  // Private Preferences member
   final PreferencesService _service;
 
   PreferencesCubit(
@@ -18,6 +19,7 @@ class PreferencesCubit extends Cubit<Preferences> {
     emit(preferences);
   }
 
+  // The Bloc will call the clear function
   Future<void> deleteAllPreferences() async {
     await _service.clear();
     emit(
