@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
 import 'package:mobile_motivation/models/preferences.dart';
 import 'package:mobile_motivation/services/system/cubit/preferences_cubit.dart';
+import 'package:mobile_motivation/utilities/dialogs/reset_preferences_dialog.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({Key? key}) : super(key: key);
@@ -28,8 +29,19 @@ class _SettingsPageState extends State<SettingsPage> {
             automaticallyImplyLeading: true,
             actions: <Widget>[
               IconButton(
-                onPressed:
-                    context.read<PreferencesCubit>().deleteAllPreferences,
+                onPressed: () async {
+                  // Show the user a dialog to confirm whether they want
+                  // to reset their current application preferences.
+                  final shouldRestart =
+                      await showResetPreferencesDialog(context);
+
+                  // If the user decided to restart, then call
+                  // on the Preferences bloc to delete all their preferences.
+                  if (shouldRestart) {
+                    if (!mounted) return;
+                    context.read<PreferencesCubit>().deleteAllPreferences();
+                  }
+                },
                 icon: const Icon(
                   Icons.restore,
                 ),
