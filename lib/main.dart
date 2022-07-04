@@ -74,24 +74,10 @@ class MainApp extends StatelessWidget {
                   appBarTheme: const AppBarTheme(
                     backgroundColor: Colors.deepPurple,
                   ),
-                  textButtonTheme: TextButtonThemeData(
-                    style: TextButton.styleFrom(
-                      textStyle: const TextStyle(
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
                 ),
                 darkTheme: ThemeData.dark().copyWith(
                   appBarTheme: const AppBarTheme(
                     backgroundColor: Colors.deepPurple,
-                  ),
-                  textButtonTheme: TextButtonThemeData(
-                    style: TextButton.styleFrom(
-                      textStyle: const TextStyle(
-                        color: Colors.white,
-                      ),
-                    ),
                   ),
                 ),
                 // PreferencesBloc is utilized here to control the themeMode
