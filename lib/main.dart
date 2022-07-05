@@ -66,6 +66,7 @@ class MainApp extends StatelessWidget {
             // the correct theme mode via the Preferences data.
             child: BlocBuilder<PreferencesCubit, Preferences>(
               builder: (context, preferences) => MaterialApp(
+                debugShowCheckedModeBanner: false,
                 title: 'Flutter Demo',
                 // Change theme data of light and dark such that each
                 // utilize the deep purple color for the background of app bars
