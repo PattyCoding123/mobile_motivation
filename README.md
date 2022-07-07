@@ -3,17 +3,7 @@
 A new Flutter project.
 
 A mobile application that sends a daily movitational quote to the user in which
-they can favorite.
+they can favorite. The project uses Firebase for authentication and cloud storage,
+while the quotes are pulled from zenquotes.io
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Images taken from Stocksnap.io
