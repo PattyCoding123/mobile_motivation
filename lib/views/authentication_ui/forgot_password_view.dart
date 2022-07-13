@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/constants/elevated_button_style.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
+import 'package:mobile_motivation/services/auth/authBloc/auth_bloc.dart';
 import 'package:mobile_motivation/utilities/dialogs/error_dialog.dart';
 import 'package:mobile_motivation/views/main_ui/custom_widgets/reset_password_form.dart';
 

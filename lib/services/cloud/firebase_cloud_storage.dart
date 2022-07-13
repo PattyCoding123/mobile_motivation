@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mobile_motivation/data/quote_model.dart';
+import 'package:mobile_motivation/models/quote_model.dart';
 import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
 import 'package:mobile_motivation/services/cloud/cloud_storage_constants.dart';
 import 'package:mobile_motivation/services/cloud/cloud_storage_exceptions.dart';

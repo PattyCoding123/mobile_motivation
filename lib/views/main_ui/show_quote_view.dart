@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
-import 'package:mobile_motivation/data/quote_model.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
+import 'package:mobile_motivation/models/quote_model.dart';
+import 'package:mobile_motivation/services/auth/authBloc/auth_bloc.dart';
 
 import 'package:share_plus/share_plus.dart';
 
@@ -80,7 +80,6 @@ class ShowQuoteView extends StatelessWidget {
                         content: Text(
                           'Added to your favorite quotes',
                           style: TextStyle(
-                            color: Colors.white,
                             fontSize: 20.0,
                           ),
                         ),

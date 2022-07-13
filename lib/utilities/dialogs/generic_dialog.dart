@@ -52,6 +52,7 @@ Future<T?> showGenericDialog<T>({
               style: const TextStyle(
                 fontFamily: courgetteFamily,
                 fontSize: 20.0,
+                color: Color.fromARGB(255, 204, 117, 218),
               ),
             ),
           );

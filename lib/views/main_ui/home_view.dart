@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_motivation/constants/font_constants.dart';
+import 'package:mobile_motivation/constants/routes.dart';
+import 'package:mobile_motivation/utilities/dialogs/logout_dialog.dart';
 import 'package:mobile_motivation/views/main_ui/show_quote_view.dart';
 import 'package:mobile_motivation/enums/menu_action.dart';
-import 'package:mobile_motivation/services/auth/bloc/auth_bloc.dart';
+import 'package:mobile_motivation/services/auth/authBloc/auth_bloc.dart';
 import 'package:mobile_motivation/services/cloud/cloud_quote.dart';
-import 'package:mobile_motivation/utilities/dialogs/logout_dialog.dart';
 import 'package:mobile_motivation/views/main_ui/quotes_list_view.dart';
 
 class HomeView extends StatefulWidget {
@@ -18,8 +19,6 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
-    context.read<AuthBloc>().add(const AuthEventFetchQuote());
-    context.read<AuthBloc>().add(const AuthEventGetFavoriteQuotes());
     // _notesService = FirebaseCloudStorage();
     super.initState();
   }
@@ -41,66 +40,84 @@ class _HomeViewState extends State<HomeView> {
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-            titleSpacing: 0.0,
-            backgroundColor: Colors.black,
-            title: const Center(
-              child: Text(
-                'Here is your daily motivation!',
-                style: TextStyle(
-                  fontFamily: courgetteFamily,
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                ),
+          titleSpacing: 0.0,
+          backgroundColor: Colors.black,
+          title: const Center(
+            child: Text(
+              'Here is your daily motivation!',
+              style: TextStyle(
+                fontFamily: courgetteFamily,
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
               ),
             ),
-            actions: [
-              // PopupMenuBotton action that currently contains logout option
-              PopupMenuButton<MenuAction>(
-                // On selected deals with whataever PopupMenuItem was selected!
-                onSelected: (value) async {
-                  // Use a switch to deal with the PopupMenuItems!
-                  switch (value) {
-                    case MenuAction.logout:
-                      final shouldLogout = await showLogOutDialog(context);
-                      if (shouldLogout) {
-                        if (!mounted) return;
-                        context.read<AuthBloc>().add(const AuthEventLogOut());
-                      }
-                  }
-                },
-                itemBuilder: (context) {
-                  return const [
-                    PopupMenuItem<MenuAction>(
-                      value: MenuAction.logout,
-                      child: Text(
-                        'Log out',
-                        style: TextStyle(
-                          fontFamily: courgetteFamily,
-                          fontSize: 20.0,
-                        ),
+          ),
+          actions: [
+            // PopupMenuBotton action that currently contains logout option
+            PopupMenuButton<MenuAction>(
+              // On selected deals with whataever PopupMenuItem was selected!
+              onSelected: (value) async {
+                // Use a switch to deal with the PopupMenuItems!
+                switch (value) {
+                  case MenuAction.settings:
+                    Navigator.of(context).pushNamed(settingsRoute);
+                    break;
+
+                  case MenuAction.logout:
+                    final shouldLogout = await showLogOutDialog(context);
+                    if (shouldLogout) {
+                      if (!mounted) return;
+                      context.read<AuthBloc>().add(
+                            const AuthEventLogOut(),
+                          );
+                    }
+                }
+              },
+              itemBuilder: (context) {
+                return const [
+                  PopupMenuItem<MenuAction>(
+                    value: MenuAction.settings,
+                    child: Text(
+                      'Settings',
+                      style: TextStyle(
+                        fontFamily: courgetteFamily,
+                        fontSize: 20.0,
                       ),
                     ),
-                  ];
-                },
-              ),
-            ],
-            bottom: const TabBar(
-              tabs: <Widget>[
-                Tab(
-                  icon: Icon(
-                    Icons.description,
                   ),
+                  PopupMenuItem<MenuAction>(
+                    value: MenuAction.logout,
+                    child: Text(
+                      'Logout',
+                      style: TextStyle(
+                        fontFamily: courgetteFamily,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  ),
+                ];
+              },
+            ),
+          ],
+          bottom: const TabBar(
+            tabs: <Widget>[
+              Tab(
+                icon: Icon(
+                  Icons.description,
                 ),
-                Tab(
-                  icon: Icon(
-                    Icons.favorite,
-                    color: Colors.white,
-                  ),
-                )
-              ],
-            )),
+              ),
+              Tab(
+                icon: Icon(
+                  Icons.favorite,
+                  color: Colors.white,
+                ),
+              )
+            ],
+          ),
+        ),
         body: TabBarView(
           children: [
+            // This tab will deal with showing the daily quote.
             Center(
               // The stack widget will allow for overlapping the text in front
               // of a background image asset.
@@ -115,12 +132,14 @@ class _HomeViewState extends State<HomeView> {
                       fit: BoxFit.fill,
                     ),
                   ),
+                  // Widget to display quote
                   ShowQuoteView(
                     quoteOfTheDay: quoteOfTheDay,
                   ),
                 ],
               ),
             ),
+            // This tab will deal with showing liked Quotes
             StreamBuilder(
               stream: context.watch<AuthBloc>().state.favQuotes,
               builder: (context, snapshot) {
