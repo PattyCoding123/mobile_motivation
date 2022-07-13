@@ -117,6 +117,7 @@ class _HomeViewState extends State<HomeView> {
         ),
         body: TabBarView(
           children: [
+            // This tab will deal with showing the daily quote.
             Center(
               // The stack widget will allow for overlapping the text in front
               // of a background image asset.
@@ -138,7 +139,7 @@ class _HomeViewState extends State<HomeView> {
                 ],
               ),
             ),
-            // Showing liked Quotes
+            // This tab will deal with showing liked Quotes
             StreamBuilder(
               stream: context.watch<AuthBloc>().state.favQuotes,
               builder: (context, snapshot) {
