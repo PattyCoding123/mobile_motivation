@@ -114,30 +114,37 @@ Once you have a compatible IDE installed, you can move to the prerequisites sect
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-When first opening the app, you are given a login page along with multiple buttons that lead to other options regarding authentication.
+When first opening the app, you are given a login page along with multiple buttons that that lead to other forms of authentication such as sign-up forms and password-resets.
 <br />
-<img src="my-notes-screenshots/authentication.gif" width="400">
+<img src="app-gifs/auth.gif" width="400">
 
 <br />
 <br />
 
-Then, once you log in, you are greeted with a list of all the notes you currently have saved in the cloud and the amount there are.
+Then, once you log in, you can see the current quote of the day which you can favorite. On top of the app are two tabs. The first tab contains the daily quote, and the second tab contains the list of all the quotes you liked.
 <br />
-<img src="my-notes-screenshots/notes_list.png" width="400">
+<img src="app-gifs/home-page.gif" width="400">
 
 <br />
 <br />
 
-From the notes list, you are able to create a note with the plus button and type in it as well as share the contents using the share icon in the top right.
+From the first tab, you can tap the share icon which will pull up the quote and author text that you can copy and share.
 <br />
-<img src="my-notes-screenshots/write_and_share_note.gif" width="400">
+<img src="app-gifs/share-quote.gif" width="400">
 
 <br />
 <br />
 
-You can the delete a note from the main page and log out if wish.
+You can the delete a quote if you wish.
 <br />
-<img src="my-notes-screenshots/delete_note.gif" width="400">
+<img src="app-gifs/delete-quote.gif" width="400">
+
+<br />
+<br />
+
+Finally, in the first tab, you can see a popup menu button at the top right that leads to the settings page and the logout button. In the settings, you can change the theme of the app to dark or light mode which will be saved to your local preferences.
+<br />
+<img src="app-gifs/theme-settings.gif" width="400">
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
