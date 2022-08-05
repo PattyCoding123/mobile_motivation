@@ -19,7 +19,7 @@
 <h1 align="center">Mobile Motivation</h1>
 
   <p align="center">
-    Mobile Motivation is my second project with the Flutter framework. It includes a finished app that pulls a motivational quote from an api and utilizes Firebase for backend authentication and data storage.
+    Mobile Motivation is my second project with the Flutter framework. It includes a finished app that pulls a motivational quote from an api and utilizes Firebase for back-end authentication and data storage.
     <br />
     <a href="https://github.com/PattyCoding123/mobile_motivation"><strong>Check out the docs »</strong></a>
     <br />
@@ -63,7 +63,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-The Mobile Motivation project is my second project using the Flutter framework as well as working with backend software. I was inspired by a guide from [Anoob Bava] to remake the daily quotes app but with more backend functionality such as user authentication, cloud storage, and a theme mode settings. The app displays a daily quote from an API in which the user can favorite and share. Additionally, the app will store the favorited quotes in the cloud and will allow the user to look at their past favorite quotes or delete them if they wish.
+The Mobile Motivation project is my second project using the Flutter framework as well as working with back-end software. I was inspired by a guide from [Anoob Bava] to remake the daily quotes app but with more back-end functionality such as user authentication, cloud storage, and a theme mode settings. The app displays a daily quote from an API in which the user can favorite and share. Additionally, the app will store the favorited quotes in the cloud and will allow the user to look at their past favorite quotes or delete them if they wish.
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
