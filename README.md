@@ -19,15 +19,14 @@
 <h1 align="center">Mobile Motivation</h1>
 
   <p align="center">
-    Mobile Motivation is my second project with the Flutter framework. It includes a finished app that pulls a motivational quote from an api and utilizes Firebase for     backend authentication and data storage.
- 
+    Mobile Motivation is my second project with the Flutter framework. It includes a finished app that pulls a motivational quote from an api and utilizes Firebase for backend authentication and data storage.
     <br />
-    <a href="https://github.com/PattyCoding123/my-notes-project"><strong>Check out the docs »</strong></a>
+    <a href="https://github.com/PattyCoding123/mobile_motivation"><strong>Check out the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/PattyCoding123/my-notes-project/issues">Report Bug</a>
+    <a href="https://github.com/PattyCoding123/mobile_motivation">Report Bug</a>
     ·
-    <a href="https://github.com/PattyCoding123/my-notes-project/issues">Request Feature</a>
+    <a href="https://github.com/PattyCoding123/mobile_motivation">Request Feature</a>
   </p>
 </div>
 
