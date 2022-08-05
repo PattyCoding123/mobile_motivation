@@ -116,7 +116,7 @@ Once you have a compatible IDE installed, you can move to the prerequisites sect
 
 When first opening the app, you are given a login page along with multiple buttons that that lead to other forms of authentication such as sign-up forms and password-resets.
 <br />
-<img src="app-gifs/auth.gif" width="400">
+<img src="app-gifs/auth.png" width="400">
 
 <br />
 <br />
