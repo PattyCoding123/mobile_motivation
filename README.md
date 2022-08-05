@@ -123,7 +123,7 @@ When first opening the app, you are given a login page along with multiple butto
 
 Then, once you log in, you can see the current quote of the day which you can favorite. On top of the app are two tabs. The first tab contains the daily quote, and the second tab contains the list of all the quotes you liked.
 <br />
-<img src="app-demos/home-page.gif" width="400">
+<img src="app-demos/like-quote.gif" width="400">
 
 <br />
 <br />
