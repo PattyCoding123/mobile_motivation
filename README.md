@@ -198,7 +198,7 @@ Project Link: [https://github.com/PattyCoding123/mobile_motivation](https://gith
 * [Article by Anoob Bava that provides a tutorial for the framework of this project](https://medium.com/flutter-community/create-a-motivation-app-using-flutter-391de123a382)
 * [Zenquotes for their free daily quote API](https://zenquotes.io/)
 * [Space ship icon provided by svgrepo.com](https://www.svgrepo.com/)
-* [Login page background image provided by https://www.publicdomainpictures.net/](https://www.publicdomainpictures.net/)
+* [Login page background image provided by publicdomainpictures.net](https://www.publicdomainpictures.net/)
 * [Home page background image provided by Stocksnap.io](Stocksnap.io)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
