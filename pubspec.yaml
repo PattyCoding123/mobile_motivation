@@ -68,7 +68,7 @@ dev_dependencies:
 flutter:
   assets:
     # background image by _
-    # background_2 image by _
+    # background_2 image by https://www.publicdomainpictures.net/
     # background_3 Vincentiu Solomon on Stocksnap.io
     - assets/images/
 
